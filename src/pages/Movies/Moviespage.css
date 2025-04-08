@@ -1,0 +1,60 @@
+.mpgContainer {
+  width: 100%;
+  margin: 0;
+  background-color: rgba(0, 0, 0, 0.986);
+  overflow-x: hidden;
+}
+.mpgTitle {
+  width: 85%;
+  margin: 1rem auto;
+  margin-top: 50px;
+}
+
+.mpgBtn {
+  width: 100px;
+  height: 30px;
+  border: none;
+  background-color: rgb(87, 81, 110);
+  border-radius: 10px;
+  cursor: pointer;
+}
+
+.mpgTitle ul {
+  color: white;
+  font-weight: 900;
+}
+
+.mpgBtnContainer {
+  display: flex;
+  width: 100%;
+  height: 50px;
+  align-items: center;
+  justify-content: center;
+}
+
+.genreContainer ul {
+  display: flex;
+
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.genreContainer li {
+  margin-left: 25px;
+}
+
+.genreContainer ul li {
+  cursor: pointer;
+  padding: 10px;
+  display: inline-block;
+  margin: 5px;
+  background-color: #424685;
+  border-radius: 5px;
+}
+
+.genreContainer ul li.selectedGenre {
+  background-color: #3498db; /* 선택된 장르일 때 배경색 변경 */
+  color: white;
+  font-weight: bold;
+}

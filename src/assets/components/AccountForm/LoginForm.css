@@ -1,0 +1,134 @@
+.accountIcon1 {
+  position: absolute;
+  top: 30.2%;
+  left: 15%;
+  z-index: 3;
+  font-size: 19px;
+}
+.accountIcon2 {
+  position: absolute;
+  top: 41.8%;
+  left: 15%;
+  z-index: 3;
+  font-size: 19px;
+}
+
+.Account-Input1,
+.Account-Input2 {
+  width: 300px;
+  height: 40px;
+  margin-bottom: 20px;
+  border-radius: 5px;
+  border: none;
+  z-index: 1; /* 입력 필드도 앞으로 */
+  position: relative;
+  padding-left: 40px;
+  box-sizing: border-box;
+}
+
+.Account-content {
+  display: flex;
+  width: 100%;
+  flex-direction: column;
+  position: relative; /* 레이어 설정을 위한 상대 위치 */
+  z-index: 1; /* 폼 내용도 앞으로 */
+}
+
+.Account-Input1,
+.Account-Input2 {
+  width: 300px;
+  height: 40px;
+  margin-bottom: 20px;
+  border-radius: 5px;
+  border: none;
+  z-index: 1; /* 입력 필드도 앞으로 */
+  position: relative;
+  padding-left: 10px;
+  box-sizing: border-box;
+}
+
+.Account-Btn {
+  height: 40px;
+  color: white;
+  background-color: rgb(98, 59, 204);
+  border: none;
+  margin-top: 20px;
+  border-radius: 5px;
+  cursor: pointer;
+  z-index: 1; /* 버튼도 앞으로 */
+  width: 100%;
+}
+
+.saying {
+  width: 100%;
+  height: 150px;
+  color: white;
+  text-align: center;
+}
+
+.endTitle {
+  display: flex;
+  text-align: center;
+  color: white;
+  font-weight: 900;
+  height: 50px;
+  width: auto;
+  justify-content: center;
+  align-items: flex-end;
+}
+
+.Account-BtnContainer {
+  display: flex;
+  justify-content: center;
+}
+
+.idContainer small,
+.ncikContainer small,
+.pwContainer small,
+.confirmContainer small {
+  height: 10%;
+  color: white;
+  display: block; /* 블록 요소로 변환하여 아래에 위치하도록 함 */
+  text-align: center;
+  margin-bottom: 10px;
+}
+
+.accountForm {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  z-index: 101;
+}
+
+.idContainer,
+.ncikContainer,
+.pwContainer,
+.confirmContainer {
+  display: flex;
+  width: 100%;
+  flex-direction: column;
+  align-items: center;
+}
+
+.Account-BtnContainer {
+  width: 80%;
+}
+
+.idCheckButton {
+  border: none;
+  height: 30px;
+  border-radius: 10px;
+  background-color: rgb(109, 88, 202);
+}
+
+.idCheckButtonContainer {
+  height: 40px;
+}
+
+.afl {
+  cursor: pointer;
+  color: gray;
+  font-size: 14px;
+  padding-top: 15px;
+  font-weight: 900;
+}
