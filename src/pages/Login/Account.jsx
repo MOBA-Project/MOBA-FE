@@ -38,10 +38,10 @@ const CreateAccount = ({}) => {
   ];
 
   return (
-    <div className='Account-main'>
+    <div className="Account-main">
       <ImageSlider onSlideChange={setCurrentSlide} />
-      <div className='loginLogo'>
-        <img src={Logo} alt='' />
+      <div className="loginLogo">
+        <img src={Logo} alt="" />
       </div>
       <LoginForm wiseSaying={wiseSaying} currentSlide={currentSlide} />
     </div>
