@@ -35,9 +35,12 @@ const LoginForm = ({ wiseSaying, currentSlide }) => {
 
     try {
       // 서버로 아이디 중복 체크 요청
-      const response = await axios.post("http://localhost:5000/check-id", {
-        id,
-      });
+      const response = await axios.post(
+        "http://localhost:5001/users/check-id",
+        {
+          id,
+        }
+      );
       if (response.status === 200) {
         setIdError("사용 가능한 아이디입니다.");
         setIsIdCheck(true);
@@ -89,7 +92,7 @@ const LoginForm = ({ wiseSaying, currentSlide }) => {
 
     try {
       // 서버로 회원가입 요청
-      const response = await axios.post("http://localhost:5000/signup", {
+      const response = await axios.post("http://localhost:5001/users/signup", {
         id,
         pw,
         nick,
@@ -104,40 +107,40 @@ const LoginForm = ({ wiseSaying, currentSlide }) => {
   };
 
   return (
-    <div className='Account-container'>
-      <div className='Account-content'>
+    <div className="Account-container">
+      <div className="Account-content">
         <div
-          className='saying'
+          className="saying"
           dangerouslySetInnerHTML={{
             __html: DOMPurify.sanitize(wiseSaying[currentSlide]?.text || ""),
           }}
         ></div>
-        <form className='accountForm' onSubmit={signupHandler}>
-          <div className='nickContainer'>
+        <form className="accountForm" onSubmit={signupHandler}>
+          <div className="nickContainer">
             <input
-              type='text'
-              placeholder='닉네임'
+              type="text"
+              placeholder="닉네임"
               onChange={(e) => setNick(e.target.value)}
               value={nick}
-              className='Account-Input1'
+              className="Account-Input1"
               maxLength={16}
             />
           </div>
-          <div className='idContainer'>
+          <div className="idContainer">
             <input
-              type='text'
-              placeholder='아이디'
+              type="text"
+              placeholder="아이디"
               onChange={(e) => setId(e.target.value)}
               value={id}
-              className='Account-Input1'
-              id='id'
+              className="Account-Input1"
+              id="id"
               maxLength={16}
             />
-            <div className='idCheckButtonContainer'>
+            <div className="idCheckButtonContainer">
               <button
-                type='button'
+                type="button"
                 onClick={isIdCheckHandler}
-                className='idCheckButton'
+                className="idCheckButton"
               >
                 아이디 중복 확인
               </button>
@@ -145,37 +148,37 @@ const LoginForm = ({ wiseSaying, currentSlide }) => {
 
             {idError && <small>{idError}</small>}
           </div>
-          <div className='pwContainer'>
+          <div className="pwContainer">
             <input
-              type='password'
-              placeholder='비밀번호'
+              type="password"
+              placeholder="비밀번호"
               onChange={(e) => setPw(e.target.value)}
               value={pw}
-              className='Account-Input2'
-              id='pw'
+              className="Account-Input2"
+              id="pw"
               maxLength={16}
             />
             {pwError && <small>{pwError}</small>}
           </div>
-          <div className='confirmContainer'>
+          <div className="confirmContainer">
             <input
-              type='password'
-              placeholder='비밀번호 확인'
+              type="password"
+              placeholder="비밀번호 확인"
               onChange={(e) => setConfirm(e.target.value)}
               value={confirm}
-              className='Account-Input2'
-              id='confirm'
+              className="Account-Input2"
+              id="confirm"
               maxLength={16}
             />
             {confirmError && <small>{confirmError}</small>}
           </div>
-          <div className='Account-BtnContainer'>
-            <button className='Account-Btn'>회원가입</button>
+          <div className="Account-BtnContainer">
+            <button className="Account-Btn">회원가입</button>
           </div>
           <Link
-            className='afl'
+            className="afl"
             style={{ textDecoration: "none", marginTop: 10 }}
-            to='/'
+            to="/"
           >
             로그인
           </Link>

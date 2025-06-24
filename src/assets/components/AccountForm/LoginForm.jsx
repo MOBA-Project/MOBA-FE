@@ -30,7 +30,7 @@ const LoginForm = ({ wiseSaying, currentSlide }) => {
     }
 
     try {
-      const response = await axios.post("http://localhost:5000/login", {
+      const response = await axios.post("http://localhost:5001/users/login", {
         id,
         pw,
       });
@@ -62,7 +62,7 @@ const LoginForm = ({ wiseSaying, currentSlide }) => {
             <input
               type="text"
               placeholder="아이디"
-              onChange={(e) => setId(e.target.value)}
+              onChange={(e) => setID(e.target.value)}
               value={id}
               className="Account-Input1"
               id="id"
