@@ -1,20 +1,25 @@
 import "./App.css";
-import Login from "./pages/Login/Login.jsx";
-import CreateAccount from "./pages/Login/Account.jsx";
+import Login from "./features/auth/Login";
+import CreateAccount from "./features/auth/Account";
 import Main from "./pages/Main/Main.jsx";
 import { BrowserRouter, Route, Routes } from "react-router-dom";
-import Menu from "./assets/components/Sidebar/Menu.jsx";
-import ImageSlider from "./assets/components/Slider/Slider.jsx";
-import Moviespage from "./pages/Movies/Moviespage.jsx";
-import Search from "./pages/Search/Search.jsx";
-import MyPage from "./pages/myPage/MyPage.jsx";
-import MovieDetail from "./assets/components/MovieDetail.jsx";
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+import Menu from "./shared/components/Sidebar/Menu";
+import ImageSlider from "./shared/components/Slider/Slider";
+import Moviespage from "./features/movies/MoviesPage";
+import Search from "./features/search/Search";
+import MyPage from "./features/profile/Profile";
+import MovieDetail from "./features/movies/MovieDetail";
+import MyList from "./features/mylist/MyList";
+
+const queryClient = new QueryClient();
 
 function App() {
   return (
     <div className="App">
-      <BrowserRouter>
-        <Routes>
+      <QueryClientProvider client={queryClient}>
+        <BrowserRouter>
+          <Routes>
           <Route path="/" element={<Login />} />
           <Route path="/account" element={<CreateAccount />} />
           <Route path="/main" element={<Main />} />
@@ -23,9 +28,11 @@ function App() {
           <Route path="/movies" element={<Moviespage />} />
           <Route path="/search" element={<Search />} />
           <Route path="/mypage" element={<MyPage />} />
+          <Route path="/mylist" element={<MyList />} />
           <Route path="/movie/:movieID" element={<MovieDetail />} />
-        </Routes>
-      </BrowserRouter>
+          </Routes>
+        </BrowserRouter>
+      </QueryClientProvider>
     </div>
   );
 }
