@@ -1,5 +1,5 @@
 import React, { useRef, useState, useEffect } from "react";
-import axios from "axios";
+import { getMovies, getMovieVideos } from 'features/movies/api/movies';
 import { Swiper, SwiperSlide } from "swiper/react";
 import { EffectCoverflow, Pagination, Autoplay } from "swiper/modules";
 import "swiper/css";
@@ -22,10 +22,8 @@ const Main = () => {
     if (videoMap[movieId]) return videoMap[movieId];
 
     try {
-      const response = await axios.get(
-        `http://localhost:5001/movies/${movieId}/videos`
-      );
-      const video = response.data.results.find((v) => v.site === "YouTube");
+      const results = await getMovieVideos(movieId);
+      const video = results.find((v) => v.site === "YouTube");
 
       if (video) {
         setVideoMap((prev) => ({ ...prev, [movieId]: video }));
@@ -56,10 +54,10 @@ const Main = () => {
   useEffect(() => {
     const fetchMovies = async () => {
       try {
-        const response = await axios.get("http://localhost:5001/movies");
+        const data = await getMovies();
 
-        if (Array.isArray(response.data.results)) {
-          const filteredMovies = response.data.results
+        if (Array.isArray(data.results)) {
+          const filteredMovies = data.results
             .filter((movie) => movie.vote_average >= 7) // 평점 조건 완화
             .slice(0, 10); // 최대 10개
           setMovies(filteredMovies);
