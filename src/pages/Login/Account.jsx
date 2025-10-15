@@ -8,7 +8,7 @@ import Background4 from "../../assets/images/Background-img4.jpg";
 import Background5 from "../../assets/images/Background-img5.jpg";
 import "../Login/Account.css"; // 스타일을 적용
 import LoginForm from "../../assets/components/AccountForm/AccountForm";
-import ImageSlider from "../../assets/components/Slider/Slider";
+import ImageSlider from "../../shared/components/Slider/Slider";
 import Logo from "../../assets/images/Logo2.png";
 
 const CreateAccount = ({}) => {
