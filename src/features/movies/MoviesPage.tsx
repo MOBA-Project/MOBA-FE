@@ -4,7 +4,6 @@ import Menu from "../../shared/components/Sidebar/Menu";
 import Movie from "./components/MovieCard";
 import { Row } from "antd";
 import { IMAGE_BASE_URL } from "../../config";
-import Dropdown from "../../shared/components/Dropdown/Dropdown";
 import { useInfiniteQuery } from '@tanstack/react-query';
 import { fetchMovies, searchMovies } from './api';
 
