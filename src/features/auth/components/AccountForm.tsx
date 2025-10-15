@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import DOMPurify from 'dompurify';
-import axios from 'axios';
+import { checkId, signup } from 'features/auth/api/users';
 import './AccountForm.css';
 
 type Saying = { id: number; text: string };
@@ -32,8 +32,8 @@ const AccountForm: React.FC<Props> = ({ wiseSaying, currentSlide }) => {
       return false;
     }
     try {
-      const res = await axios.post('http://localhost:5001/users/check-id', { id });
-      if (res.status === 200) {
+      const ok = await checkId({ id });
+      if (ok) {
         setIdError('사용 가능한 아이디입니다.');
         setIsIdCheck(true);
         setIsIdAvailable(true);
@@ -78,8 +78,8 @@ const AccountForm: React.FC<Props> = ({ wiseSaying, currentSlide }) => {
     }
     if (!pwCheckHandler()) return;
     try {
-      const res = await axios.post('http://localhost:5001/users/signup', { id, pw, nick });
-      if (res.status === 201) {
+      const ok = await signup({ id, pw, nick });
+      if (ok) {
         alert('회원가입이 완료되었습니다. 로그인 해주세요.');
         window.location.href = '/';
       }
@@ -124,4 +124,3 @@ const AccountForm: React.FC<Props> = ({ wiseSaying, currentSlide }) => {
 };
 
 export default AccountForm;
-
