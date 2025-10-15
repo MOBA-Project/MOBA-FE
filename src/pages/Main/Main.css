@@ -54,3 +54,7 @@
   object-fit: cover;
   pointer-events: none;
 }
+
+.soundBtn {
+  cursor: pointer;
+}
