@@ -1,5 +1,5 @@
 import React, { useRef, useState, useEffect } from "react";
-import { getMovies, getMovieVideos } from 'features/movies/api/movies';
+import { getMovies, getMovieVideos } from "features/movies/api/movies";
 import { Swiper, SwiperSlide } from "swiper/react";
 import { EffectCoverflow, Pagination, Autoplay } from "swiper/modules";
 import "swiper/css";
@@ -16,6 +16,36 @@ const Main = () => {
   const [muted, setMuted] = useState(true);
   const [videoMap, setVideoMap] = useState({});
   const [videoLoading, setVideoLoading] = useState(false);
+  const iframeRef = useRef(null);
+  const [playerReady, setPlayerReady] = useState(false);
+
+  // YouTube iframe API command helper (postMessage)
+  const sendYTCommand = (func, args = []) => {
+    try {
+      const iframe = iframeRef.current;
+      if (!iframe || !iframe.contentWindow) return;
+      const msg = JSON.stringify({ event: "command", func, args });
+      iframe.contentWindow.postMessage(msg, "*");
+    } catch {}
+  };
+
+  // Listen for YouTube readiness messages
+  useEffect(() => {
+    const onMessage = (e) => {
+      if (typeof e.data !== "string") return;
+      let data;
+      try {
+        data = JSON.parse(e.data);
+      } catch {
+        return;
+      }
+      if (!data) return;
+      if (data.event === "onReady") setPlayerReady(true);
+      if (data.info && typeof data.info === "object") setPlayerReady(true);
+    };
+    window.addEventListener("message", onMessage);
+    return () => window.removeEventListener("message", onMessage);
+  }, []);
 
   // 🎬 비디오 데이터 캐시해서 가져오기
   const fetchMovieVideo = async (movieId) => {
@@ -102,42 +132,81 @@ const Main = () => {
         {currentVideoKey && (
           <>
             <iframe
-              src={`https://www.youtube.com/embed/${currentVideoKey}?autoplay=1&controls=0&loop=1&playlist=${currentVideoKey}&mute=${muted ? 1 : 0}&playsinline=1&rel=0&modestbranding=1`}
+              ref={iframeRef}
+              id="bg-youtube-player"
+              src={`https://www.youtube.com/embed/${currentVideoKey}?autoplay=1&controls=0&loop=1&playlist=${currentVideoKey}&mute=${
+                muted ? 1 : 0
+              }&playsinline=1&rel=0&modestbranding=1&enablejsapi=1&origin=${encodeURIComponent(
+                window.location.origin
+              )}`}
               style={{ border: "none" }}
               loading="eager"
               allow="autoplay; fullscreen"
               allowFullScreen
               title="Background Video"
-              onLoad={() => setVideoLoading(false)}
+              onLoad={() => {
+                setVideoLoading(false);
+                // Sync mute state after load
+                if (muted) {
+                  sendYTCommand("mute");
+                } else {
+                  sendYTCommand("unMute");
+                  sendYTCommand("setVolume", [100]);
+                }
+              }}
               onError={() => setVideoLoading(false)}
             />
             {videoLoading && (
-              <div style={{ position: 'absolute', inset: 0, display:'grid', placeItems:'center', background:'rgba(0,0,0,0.25)' }}>
-                <div style={{ color:'#fff' }}>Loading video…</div>
+              <div
+                style={{
+                  position: "absolute",
+                  inset: 0,
+                  display: "grid",
+                  placeItems: "center",
+                  background: "rgba(0,0,0,0.25)",
+                }}
+              >
+                <div style={{ color: "#fff" }}>Loading video…</div>
               </div>
             )}
-            <button
-              onClick={() => setMuted((m) => !m)}
-              style={{
-                position: "absolute",
-                right: 16,
-                bottom: 16,
-                zIndex: 2,
-                background: "rgba(0,0,0,0.5)",
-                color: "#fff",
-                border: "none",
-                borderRadius: 6,
-                padding: "8px 12px",
-                cursor: "pointer",
-              }}
-              aria-label={muted ? "소리 켜기" : "소리 끄기"}
-              title={muted ? "소리 켜기" : "소리 끄기"}
-            >
-              {muted ? "🔇 음소거" : "🔊 소리 켜짐"}
-            </button>
           </>
         )}
       </div>
+      {/* Always render control button outside of backgroundVideo to avoid stacking issues */}
+      <button
+        className="soundBtn"
+        onClick={() => {
+          setMuted((m) => {
+            const next = !m;
+            // Send command after a user gesture
+            setTimeout(() => {
+              if (next) {
+                sendYTCommand("mute");
+              } else {
+                sendYTCommand("unMute");
+                sendYTCommand("setVolume", [100]);
+              }
+            }, 0);
+            return next;
+          });
+        }}
+        style={{
+          position: "fixed",
+          right: 16,
+          bottom: 16,
+          zIndex: 20,
+          background: "rgba(0,0,0,0.5)",
+          color: "#fff",
+          border: "none",
+          borderRadius: 6,
+          padding: "8px 12px",
+          cursor: "pointer",
+        }}
+        aria-label={muted ? "소리 켜기" : "소리 끄기"}
+        title={muted ? "소리 켜기" : "소리 끄기"}
+      >
+        {muted ? "🔇 음소거" : "🔊 소리 켜짐"}
+      </button>
       <div className="swiperContainer">
         <Swiper
           effect={"coverflow"}
@@ -198,7 +267,11 @@ const Main = () => {
 };
 
 // 헬퍼 컴포넌트: 초기 한번 가운데로 이동
-const InitCenterSlide = ({ moviesLength, swiperRef, updateBackgroundVideo }) => {
+const InitCenterSlide = ({
+  moviesLength,
+  swiperRef,
+  updateBackgroundVideo,
+}) => {
   useEffect(() => {
     const center = Math.floor(moviesLength / 2);
     if (swiperRef.current) {
