@@ -1,5 +1,7 @@
 import React, { useState } from "react";
 import axios from "axios";
+import './Login.css';
+import Logo from 'assets/images/Logo2.png';
 
 const CreateAccount: React.FC = () => {
   const [id, setId] = useState("");
@@ -19,29 +21,19 @@ const CreateAccount: React.FC = () => {
   };
 
   return (
-    <div style={{ display: "grid", placeItems: "center", minHeight: "100vh" }}>
-      <form onSubmit={onSubmit} style={{ display: "grid", gap: 8, width: 360 }}>
-        <h2>Create Account</h2>
-        <input
-          placeholder="Nickname"
-          value={nick}
-          onChange={(e) => setNick(e.target.value)}
-        />
-        <input
-          placeholder="ID"
-          value={id}
-          onChange={(e) => setId(e.target.value)}
-        />
-        <input
-          placeholder="Password"
-          type="password"
-          value={pw}
-          onChange={(e) => setPw(e.target.value)}
-        />
-        {message && <div>{message}</div>}
-        <button type="submit">Sign up</button>
-        <a href="/">Back to login</a>
-      </form>
+    <div className="authContainer">
+      <div className="authPanel">
+        <img src={Logo} alt="logo" className="authLogo" />
+        <h2 className="authTitle">Create Account</h2>
+        <form onSubmit={onSubmit} className="authForm">
+          <input className="authInput" placeholder="Nickname" value={nick} onChange={(e)=>setNick(e.target.value)} />
+          <input className="authInput" placeholder="ID" value={id} onChange={(e)=>setId(e.target.value)} />
+          <input className="authInput" placeholder="Password" type="password" value={pw} onChange={(e)=>setPw(e.target.value)} />
+          {message && <div className="authInfo">{message}</div>}
+          <button type="submit" className="authButton">Sign up</button>
+        </form>
+        <a href="/" className="authLink">Back to login</a>
+      </div>
     </div>
   );
 };
