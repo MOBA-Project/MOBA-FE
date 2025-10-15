@@ -1,0 +1,11 @@
+.authContainer{min-height:100vh;display:grid;place-items:center;background:url('../../assets/images/Background-img.jpg') center/cover no-repeat fixed}
+.authPanel{width:360px;max-width:90vw;background:rgba(0,0,0,.6);backdrop-filter: blur(6px);padding:24px;border-radius:12px;box-shadow:0 8px 30px rgba(0,0,0,.4);display:grid;gap:12px;color:#eee}
+.authLogo{width:140px;justify-self:center;filter: drop-shadow(0 2px 4px rgba(0,0,0,.6))}
+.authTitle{margin:6px 0 4px 0;text-align:center}
+.authForm{display:grid;gap:10px}
+.authInput{padding:10px 12px;border-radius:8px;border:1px solid #333;background:#111;color:#eee}
+.authButton{padding:10px 12px;border-radius:8px;border:none;background:#e50914;color:#fff;font-weight:700;cursor:pointer}
+.authButton:hover{background:#f6121d}
+.authLink{color:#9bd;justify-self:center;text-decoration:none}
+.authError{color:#ff7b7b;font-size:.9rem}
+.authInfo{color:#9bd;font-size:.9rem}
