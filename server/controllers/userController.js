@@ -55,3 +55,28 @@ exports.protected = (req, res) => {
     }
   });
 };
+
+// 회원정보 수정: 닉네임/비밀번호 변경 (데모: 메모리 저장)
+exports.update = (req, res) => {
+  const authHeader = req.headers["authorization"];
+  const token = authHeader?.split(" ")[1];
+  if (!token)
+    return res.status(403).json({ message: "토큰이 제공되지 않았습니다." });
+
+  jwt.verify(token, process.env.SECRET_KEY, (err, decoded) => {
+    if (err)
+      return res.status(401).json({ message: "토큰이 유효하지 않습니다." });
+
+    const { nick, pw, currentPw } = req.body || {};
+    const user = users.find((u) => u.id === decoded.id);
+    if (!user) return res.status(404).json({ message: "유저를 찾을 수 없습니다." });
+    // 현재 비밀번호 확인 필수
+    if (!currentPw || user.pw !== currentPw) {
+      return res.status(401).json({ message: "현재 비밀번호가 올바르지 않습니다." });
+    }
+    if (typeof nick === "string" && nick.trim()) user.nick = nick.trim();
+    if (typeof pw === "string" && pw.trim()) user.pw = pw.trim();
+
+    return res.json({ message: "수정되었습니다.", id: user.id, nick: user.nick });
+  });
+};
