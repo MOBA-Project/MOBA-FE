@@ -10,7 +10,10 @@ const Login: React.FC = () => {
     e.preventDefault();
     setError("");
     try {
-      const res = await axios.post("http://localhost:5001/users/login", { id, pw });
+      const res = await axios.post("http://localhost:5001/users/login", {
+        id,
+        pw,
+      });
       localStorage.setItem("token", res.data.token);
       window.location.href = "/main";
     } catch (err: any) {
@@ -22,9 +25,18 @@ const Login: React.FC = () => {
     <div style={{ display: "grid", placeItems: "center", minHeight: "100vh" }}>
       <form onSubmit={onSubmit} style={{ display: "grid", gap: 8, width: 320 }}>
         <h2>Login</h2>
-        <input placeholder="ID" value={id} onChange={(e)=>setID(e.target.value)} />
-        <input placeholder="Password" type="password" value={pw} onChange={(e)=>setPw(e.target.value)} />
-        {error && <div style={{ color: 'tomato' }}>{error}</div>}
+        <input
+          placeholder="ID"
+          value={id}
+          onChange={(e) => setID(e.target.value)}
+        />
+        <input
+          placeholder="Password"
+          type="password"
+          value={pw}
+          onChange={(e) => setPw(e.target.value)}
+        />
+        {error && <div style={{ color: "tomato" }}>{error}</div>}
         <button type="submit">Sign in</button>
         <a href="/account">Create an account</a>
       </form>
@@ -33,4 +45,3 @@ const Login: React.FC = () => {
 };
 
 export default Login;
-
