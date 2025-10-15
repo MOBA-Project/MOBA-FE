@@ -1,15 +1,103 @@
-.Account-main{position:relative}
-.loginLogo{position:absolute;top:20px;left:50%;transform:translateX(-50%);z-index:2}
-.loginLogo img{width:200px}
-.Account-container{display:flex;flex-direction:column;width:100%;align-items:center;position:relative;z-index:1}
-.Account-content{display:flex;width:100%;flex-direction:column;position:relative;z-index:1;align-items:center}
-.accountForm{display:flex;flex-direction:column;align-items:center;z-index:101}
-.Account-Input1,.Account-Input2{width:300px;height:40px;margin-bottom:20px;border-radius:5px;border:none;position:relative;padding-left:10px;box-sizing:border-box}
-.Account-Btn{height:40px;color:#fff;background-color:rgb(98,59,204);border:none;margin-top:20px;border-radius:5px;cursor:pointer;width:100%}
-.saying{width:100%;height:150px;color:#fff;text-align:center}
-.endTitle{display:flex;text-align:center;color:#fff;font-weight:900;height:50px;justify-content:center;align-items:flex-end}
-.Account-BtnContainer{display:flex;justify-content:center;width:80%}
-.idCheckButton{border:none;height:30px;border-radius:10px;background-color:rgb(109,88,202)}
-.idCheckButtonContainer{height:40px}
-.aoc{cursor:pointer;color:gray;font-size:14px;padding-top:15px;font-weight:900}
-.idContainer small,.ncikContainer small,.pwContainer small,.confirmContainer small{height:10%;color:#fff;display:block;text-align:center;margin-bottom:10px}
+.Account-main {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  position: fixed;
+  width: 100vw;
+  height: 100vh;
+  top: 0;
+  left: 0;
+}
+
+.loginLogo {
+  position: absolute;
+  top: 20px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 2;
+}
+
+.loginLogo img { width: 200px; height: auto; }
+
+.Account-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 400px;
+  height: 600px;
+  background-color: rgba(0, 0, 0, 0.7);
+  z-index: 1;
+  border-radius: 8px;
+}
+
+.Account-content {
+  display: flex;
+  width: 100%;
+  flex-direction: column;
+  position: relative;
+  z-index: 1;
+  align-items: center;
+}
+
+.accountForm { display: flex; flex-direction: column; align-items: center; z-index: 101; }
+
+.Account-Input1,
+.Account-Input2 {
+  width: 300px;
+  height: 40px;
+  margin-bottom: 20px;
+  border-radius: 5px;
+  border: none;
+  position: relative;
+  padding-left: 10px;
+  box-sizing: border-box;
+}
+
+.Account-Btn {
+  height: 40px;
+  color: #fff;
+  background-color: rgb(98, 59, 204);
+  border: none;
+  margin-top: 20px;
+  border-radius: 5px;
+  cursor: pointer;
+  width: 100%;
+}
+
+.saying { width: 100%; height: 150px; color: #fff; text-align: center; }
+
+.endTitle {
+  display: flex;
+  text-align: center;
+  color: #fff;
+  font-weight: 900;
+  height: 50px;
+  width: auto;
+  justify-content: center;
+  align-items: flex-end;
+}
+
+.Account-BtnContainer { display: flex; justify-content: center; width: 80%; }
+
+.idCheckButton { border: none; height: 30px; border-radius: 10px; background-color: rgb(109, 88, 202); }
+
+.idCheckButtonContainer { height: 40px; }
+
+.aoc { cursor: pointer; color: gray; font-size: 14px; padding-top: 15px; font-weight: 900; }
+
+.idContainer small,
+.nickContainer small,
+.pwContainer small,
+.confirmContainer small {
+  height: 10%;
+  color: #fff;
+  display: block;
+  text-align: center;
+  margin-bottom: 10px;
+}
+
+@media (max-width: 420px) {
+  .Account-container { width: calc(100% - 2rem); height: auto; padding: 2rem 0; }
+  .Account-Input1, .Account-Input2 { width: calc(100% - 2rem); max-width: 300px; }
+}

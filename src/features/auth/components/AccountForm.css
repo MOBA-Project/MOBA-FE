@@ -1,5 +1,4 @@
-.Account-container{display:flex;flex-direction:column;width:100%;align-items:center;position:relative;z-index:1}
-.Account-content{display:flex;width:100%;flex-direction:column;position:relative;z-index:1;align-items:center}
+/* Container styles are defined in ../Account.css to avoid conflicts */
 .accountForm{display:flex;flex-direction:column;align-items:center;z-index:101}
 .Account-Input1,.Account-Input2{width:300px;height:40px;margin-bottom:20px;border-radius:5px;border:none;position:relative;padding-left:10px;box-sizing:border-box}
 .Account-Btn{height:40px;color:#fff;background-color:rgb(98,59,204);border:none;margin-top:20px;border-radius:5px;cursor:pointer;width:100%}
