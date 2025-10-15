@@ -2,19 +2,23 @@
   display: flex;
   flex-direction: column;
   width: 100%;
-  height: 80%;
+  height: 100vh;
   justify-content: center;
   align-items: center;
-}
-.loginLogo {
-  width: 100%;
-  height: 300px;
-  overflow: hidden;
   position: relative;
 }
+
+.loginLogo {
+  position: absolute;
+  top: 20px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 2;
+}
+
 .loginLogo img {
-  max-width: 100%;
-  height: 200px;
+  width: 200px;
+  height: auto;
 }
 
 .Login-content {
@@ -23,9 +27,11 @@
   justify-content: center;
   align-items: center;
   width: 400px;
+  max-width: calc(100% - 2rem);
   background-color: rgba(0, 0, 0, 0.774);
   z-index: 1;
   padding: 5rem 1rem;
+  border-radius: 8px;
 }
 
 .Login-Btn {
@@ -43,6 +49,7 @@
 .Login-Input1,
 .Login-Input2 {
   width: 300px;
+  max-width: 90%;
   height: 40px;
   margin-bottom: 20px;
   border-radius: 5px;
@@ -60,4 +67,11 @@
   font-size: 14px;
   padding-top: 15px;
   font-weight: 900;
+}
+
+/* Shared visual for the rotating quotes */
+.saying { width: 100%; height: 150px; color: #fff; text-align: center; }
+
+@media (max-width: 420px) {
+  .Login-content { padding: 4rem 1rem; }
 }
