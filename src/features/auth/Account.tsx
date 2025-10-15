@@ -22,9 +22,22 @@ const CreateAccount: React.FC = () => {
     <div style={{ display: "grid", placeItems: "center", minHeight: "100vh" }}>
       <form onSubmit={onSubmit} style={{ display: "grid", gap: 8, width: 360 }}>
         <h2>Create Account</h2>
-        <input placeholder="Nickname" value={nick} onChange={(e)=>setNick(e.target.value)} />
-        <input placeholder="ID" value={id} onChange={(e)=>setId(e.target.value)} />
-        <input placeholder="Password" type="password" value={pw} onChange={(e)=>setPw(e.target.value)} />
+        <input
+          placeholder="Nickname"
+          value={nick}
+          onChange={(e) => setNick(e.target.value)}
+        />
+        <input
+          placeholder="ID"
+          value={id}
+          onChange={(e) => setId(e.target.value)}
+        />
+        <input
+          placeholder="Password"
+          type="password"
+          value={pw}
+          onChange={(e) => setPw(e.target.value)}
+        />
         {message && <div>{message}</div>}
         <button type="submit">Sign up</button>
         <a href="/">Back to login</a>
@@ -34,4 +47,3 @@ const CreateAccount: React.FC = () => {
 };
 
 export default CreateAccount;
-
