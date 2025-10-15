@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import axios from "axios";
 import { FaRegUserCircle, FaLock } from "react-icons/fa";
-import ImageSlider from "../../assets/components/Slider/Slider";
+import ImageSlider from "../../shared/components/Slider/Slider";
 import "../Login/Login.css";
 import { useNavigate } from "react-router-dom";
 import Logo from "../../assets/images/Logo2.png";
@@ -28,7 +28,7 @@ const Login = () => {
     }
 
     try {
-      const response = await axios.post("http://localhost:5001/login", {
+      const response = await axios.post("http://localhost:5001/users/login", {
         id,
         pw,
       });
