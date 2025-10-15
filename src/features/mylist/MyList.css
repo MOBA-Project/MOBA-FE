@@ -1,0 +1,42 @@
+.mylistContainer {
+  width: 100%;
+  background-color: rgba(0, 0, 0, 0.986);
+  min-height: 100vh;
+}
+.mylistContent {
+  width: 85%;
+  margin: 1rem auto;
+  padding-top: 50px;
+}
+.mylistHeader {
+  display:flex;
+  align-items:center;
+  justify-content: space-between;
+  color:#fff;
+  margin-bottom: 12px;
+}
+.actions { display:flex; gap:8px; }
+.actions button {
+  background:#424685; color:#fff; border:none; border-radius:6px; padding:8px 10px; cursor:pointer;
+}
+.tabs {
+  display: flex;
+  gap: 12px;
+  margin: 12px 0 24px;
+}
+.tab {
+  background-color: #424685;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  padding: 10px 14px;
+  cursor: pointer;
+  font-weight: 700;
+}
+.tab.active {
+  background-color: #3498db;
+}
+.emptyBox {
+  color: #bbb;
+  padding: 24px;
+}
