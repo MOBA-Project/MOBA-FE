@@ -12,8 +12,10 @@ const Main = () => {
   const swiperRef = useRef(null);
   const [movies, setMovies] = useState([]);
   const [error, setError] = useState(null);
-  const [backgroundVideo, setBackgroundVideo] = useState(null);
+  const [currentVideoKey, setCurrentVideoKey] = useState(null);
+  const [muted, setMuted] = useState(true);
   const [videoMap, setVideoMap] = useState({});
+  const [videoLoading, setVideoLoading] = useState(false);
 
   // 🎬 비디오 데이터 캐시해서 가져오기
   const fetchMovieVideo = async (movieId) => {
@@ -41,11 +43,12 @@ const Main = () => {
     const selectedMovie = movies[index];
     if (!selectedMovie) return;
 
+    setVideoLoading(true);
     const video = await fetchMovieVideo(selectedMovie.id);
     if (video) {
-      setBackgroundVideo(
-        `https://www.youtube.com/embed/${video.key}?autoplay=1&controls=0&loop=1&playlist=${video.key}`
-      );
+      setCurrentVideoKey(video.key);
+    } else {
+      setVideoLoading(false);
     }
   };
 
@@ -75,9 +78,12 @@ const Main = () => {
   // ✅ 상위 3개 영화 비디오 미리 로딩
   useEffect(() => {
     const preload = async () => {
-      for (let i = 0; i < Math.min(3, movies.length); i++) {
-        await fetchMovieVideo(movies[i].id);
-      }
+      // 모든 후보의 트레일러 키를 미리 가져와 캐시에 채워 둡니다.
+      const ids = movies.slice(0, 12).map((m) => m.id);
+      await Promise.allSettled(ids.map((id) => fetchMovieVideo(id)));
+      // 가운데 슬라이드의 비디오로 초기화
+      const center = Math.floor(movies.length / 2);
+      updateBackgroundVideo(center);
     };
 
     if (movies.length > 0) preload();
@@ -95,14 +101,43 @@ const Main = () => {
     <>
       <Menu />
       <div className="backgroundVideo">
-        {backgroundVideo && (
-          <iframe
-            src={backgroundVideo}
-            style={{ border: "none" }}
-            allow="autoplay; fullscreen"
-            allowFullScreen
-            title="Background Video"
-          />
+        {currentVideoKey && (
+          <>
+            <iframe
+              src={`https://www.youtube.com/embed/${currentVideoKey}?autoplay=1&controls=0&loop=1&playlist=${currentVideoKey}&mute=${muted ? 1 : 0}&playsinline=1&rel=0&modestbranding=1`}
+              style={{ border: "none" }}
+              loading="eager"
+              allow="autoplay; fullscreen"
+              allowFullScreen
+              title="Background Video"
+              onLoad={() => setVideoLoading(false)}
+              onError={() => setVideoLoading(false)}
+            />
+            {videoLoading && (
+              <div style={{ position: 'absolute', inset: 0, display:'grid', placeItems:'center', background:'rgba(0,0,0,0.25)' }}>
+                <div style={{ color:'#fff' }}>Loading video…</div>
+              </div>
+            )}
+            <button
+              onClick={() => setMuted((m) => !m)}
+              style={{
+                position: "absolute",
+                right: 16,
+                bottom: 16,
+                zIndex: 2,
+                background: "rgba(0,0,0,0.5)",
+                color: "#fff",
+                border: "none",
+                borderRadius: 6,
+                padding: "8px 12px",
+                cursor: "pointer",
+              }}
+              aria-label={muted ? "소리 켜기" : "소리 끄기"}
+              title={muted ? "소리 켜기" : "소리 끄기"}
+            >
+              {muted ? "🔇 음소거" : "🔊 소리 켜짐"}
+            </button>
+          </>
         )}
       </div>
       <div className="swiperContainer">
@@ -152,8 +187,29 @@ const Main = () => {
           ))}
         </Swiper>
       </div>
+      {/** 초기 로드시 가운데 슬라이드로 이동 */}
+      {movies && movies.length > 0 && (
+        <InitCenterSlide
+          moviesLength={movies.length}
+          swiperRef={swiperRef}
+          updateBackgroundVideo={updateBackgroundVideo}
+        />
+      )}
     </>
   );
+};
+
+// 헬퍼 컴포넌트: 초기 한번 가운데로 이동
+const InitCenterSlide = ({ moviesLength, swiperRef, updateBackgroundVideo }) => {
+  useEffect(() => {
+    const center = Math.floor(moviesLength / 2);
+    if (swiperRef.current) {
+      swiperRef.current.slideTo(center, 0);
+      updateBackgroundVideo(center);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [moviesLength]);
+  return null;
 };
 
 export default Main;
