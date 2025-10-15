@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import axios from "axios";
+import { login } from './api/users';
 import { useNavigate } from 'react-router-dom';
 import ImageSlider from 'shared/components/Slider/Slider';
 import Logo from 'assets/images/Logo2.png';
@@ -20,8 +20,8 @@ const Login: React.FC = () => {
       return;
     }
     try {
-      const res = await axios.post("http://localhost:5001/users/login", { id, pw });
-      localStorage.setItem("token", res.data.token);
+      const data = await login({ id, pw });
+      localStorage.setItem("token", data.token);
       navigate('/main');
     } catch (err: any) {
       setErrorMessage("아이디 또는 비밀번호가 올바르지 않습니다.");
