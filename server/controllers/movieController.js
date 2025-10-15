@@ -74,3 +74,39 @@ exports.getMovieVideos = async (req, res) => {
     res.status(500).json({ error: "Internal Server Error" });
   }
 };
+
+// Search movies by query
+exports.searchMovies = async (req, res) => {
+  const { query = "", page = 1 } = req.query;
+  if (!query) return res.status(400).json({ error: "query is required" });
+  try {
+    // 1차: 한국어 우선 검색
+    let response = await axios.get(`${TMDB_BASE_URL}/search/movie`, {
+      params: {
+        api_key: TMDB_API_KEY,
+        language: "ko-KR",
+        query,
+        page,
+        include_adult: false,
+        region: "KR",
+      },
+    });
+
+    // 결과가 없을 경우 영어로 폴백
+    if (!response.data?.results?.length) {
+      response = await axios.get(`${TMDB_BASE_URL}/search/movie`, {
+        params: {
+          api_key: TMDB_API_KEY,
+          language: "en-US",
+          query,
+          page,
+          include_adult: false,
+        },
+      });
+    }
+    res.json(response.data);
+  } catch (error) {
+    console.error("Error searching movies from TMDb:", error);
+    res.status(500).json({ error: "Failed to search movies from TMDb API" });
+  }
+};
