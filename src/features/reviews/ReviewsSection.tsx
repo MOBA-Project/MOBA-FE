@@ -32,10 +32,25 @@ const CommentBox: React.FC<{ onSubmit: (text: string)=>void; placeholder?: strin
 const ReviewItem: React.FC<{
   review: any;
   user: User;
-}> = ({ review, user }) => {
+  focus?: boolean;
+}> = ({ review, user, focus }) => {
   const qc = useQueryClient();
   const [expanded, setExpanded] = useState<Record<string, boolean>>({});
   const toggleExpanded = (rootId: string) => setExpanded(prev => ({ ...prev, [rootId]: !prev[rootId] }));
+  const reviewRef = React.useRef<HTMLDivElement | null>(null);
+  // Scroll into view if focused
+  React.useEffect(() => {
+    if (focus) {
+      const el = reviewRef.current || document.getElementById(`review-${review._id}`);
+      if (!el) return;
+      // 화면 스크롤 위치를 리뷰 상단으로 이동하고 키보드 포커스 부여
+      el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      // tabIndex가 있어야 focus 가능
+      (el as HTMLElement).focus?.();
+      el.classList.add('focus-highlight');
+      setTimeout(() => el.classList.remove('focus-highlight'), 1500);
+    }
+  }, [focus, review?._id]);
 
   // Root comments
   const { data: roots, refetch: refetchRoots } = useQuery({
@@ -82,7 +97,14 @@ const ReviewItem: React.FC<{
   });
 
   return (
-    <div style={{ border:'1px solid #333', borderRadius:8, padding:12, marginBottom:12 }}>
+    <div
+      id={`review-${review._id}`}
+      ref={reviewRef}
+      tabIndex={-1}
+      role="region"
+      aria-label="내 리뷰"
+      style={{ border:'1px solid #333', borderRadius:8, padding:12, marginBottom:12, outline: focus ? '2px solid #7aa2ff' : 'none' }}
+    >
       <div style={{ display:'flex', alignItems:'center', gap:8 }}>
         <div style={{ width:28, height:28, borderRadius:'50%', background:'#424685', color:'#fff', display:'inline-flex', alignItems:'center', justifyContent:'center', fontWeight:900 }}>
           {String(review.userId).charAt(0).toUpperCase()}
@@ -243,7 +265,7 @@ const CreateReviewBox: React.FC<{ movieId: number; onCreated: ()=>void; user: Us
   );
 };
 
-const ReviewsSection: React.FC<{ movieId: number; user: User }> = ({ movieId, user }) => {
+const ReviewsSection: React.FC<{ movieId: number; user: User; focusReviewId?: string }> = ({ movieId, user, focusReviewId }) => {
   const qc = useQueryClient();
   const { data: stats } = useQuery({ queryKey: ['movie', movieId, 'reviewStats'], queryFn: () => fetchMovieReviewStats(movieId) });
   const { data: list, refetch } = useQuery({ queryKey: ['movie', movieId, 'reviews'], queryFn: () => fetchReviewsByMovie(movieId, 1, 10, { sort: 'recent' }) });
@@ -257,7 +279,7 @@ const ReviewsSection: React.FC<{ movieId: number; user: User }> = ({ movieId, us
       <CreateReviewBox movieId={movieId} user={user} onCreated={()=>{ qc.invalidateQueries({ queryKey: ['movie', movieId, 'reviews'] }); qc.invalidateQueries({ queryKey: ['movie', movieId, 'reviewStats'] }); }} />
       <div>
         {items.map((rv: any) => (
-          <ReviewItem key={rv._id} review={rv} user={user} />
+          <ReviewItem key={rv._id} review={rv} user={user} focus={focusReviewId === rv._id} />
         ))}
       </div>
     </div>
