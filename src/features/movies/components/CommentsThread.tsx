@@ -33,7 +33,8 @@ const CommentItemView: React.FC<{
   onEdit: (id: string, text: string)=>void;
   onDelete: (id: string)=>void;
   onLike: (id: string)=>void;
-}> = ({ item, children, me, onReply, onEdit, onDelete, onLike }) => {
+  allowReply?: boolean;
+}> = ({ item, children, me, onReply, onEdit, onDelete, onLike, allowReply = true }) => {
   const [editing, setEditing] = useState(false);
   const [replying, setReplying] = useState(false);
   return (
@@ -54,13 +55,16 @@ const CommentItemView: React.FC<{
         <CommentBox initial={item.text} onSubmit={(t)=>{ onEdit(item.id, t); setEditing(false);} } onCancel={()=>setEditing(false)} />
       )}
       <div style={{ display:'flex', gap:8, marginTop:6 }}>
-        <button onClick={()=>setReplying(v=>!v)}>답글</button>
+        {allowReply && <button onClick={()=>setReplying(v=>!v)}>답글</button>}
         {me?.id === item.userId && <>
           <button onClick={()=>setEditing(true)}>수정</button>
-          <button onClick={()=>onDelete(item.id)}>삭제</button>
+          <button onClick={()=>{
+            const ok = window.confirm('정말로 삭제하시겠습니까?');
+            if (ok) onDelete(item.id);
+          }}>삭제</button>
         </>}
       </div>
-      {replying && <CommentBox placeholder='답글을 입력하세요' onSubmit={(t)=>{ onReply(item.id, t); setReplying(false);} } onCancel={()=>setReplying(false)} />}
+      {allowReply && replying && <CommentBox placeholder='답글을 입력하세요' onSubmit={(t)=>{ onReply(item.id, t); setReplying(false);} } onCancel={()=>setReplying(false)} />}
       <div style={{ marginLeft:24 }}>
         {children}
       </div>
@@ -72,30 +76,66 @@ const CommentsThread: React.FC<Props> = ({ movieId, user }) => {
   const [items, setItems] = useState<CommentItem[]>([]);
   useEffect(()=>{ setItems(getComments(movieId)); }, [movieId]);
 
+  // Build root->children map
   const tree = useMemo(()=>{
     const map: Record<string, CommentItem[]> = {} as any;
+    map['root'] = [];
     for (const it of items) {
-      const pid = it.parentId || 'root';
-      map[pid] = map[pid] || [];
-      map[pid].push(it);
+      if (!it.parentId) {
+        map['root'].push(it);
+      } else {
+        map[it.parentId] = map[it.parentId] || [];
+        map[it.parentId].push(it);
+      }
     }
     return map;
   }, [items]);
 
-  const renderChildren = (parentId: string | null) => {
-    const list = tree[parentId || 'root'] || [];
-    return list.map(it => (
-      <CommentItemView key={it.id}
-        item={it}
-        me={user}
-        onReply={(pid, text)=>{ if(!user) return alert('로그인이 필요합니다.'); setItems(addComment(movieId, user, text, pid)); }}
-        onEdit={(id, text)=> setItems(updateComment(movieId, id, text))}
-        onDelete={(id)=> setItems(deleteComment(movieId, id))}
-        onLike={(id)=>{ if(!user) return alert('로그인이 필요합니다.'); setItems(toggleLikeComment(movieId, id, user.id)); }}
-      >
-        {renderChildren(it.id)}
-      </CommentItemView>
-    ));
+  // Track expanded roots (instagram-style: only one-level replies)
+  const [expanded, setExpanded] = useState<Record<string, boolean>>({});
+  const toggleExpanded = (rootId: string) => setExpanded(prev => ({ ...prev, [rootId]: !prev[rootId] }));
+
+  const renderRootList = () => {
+    const roots = tree['root'] || [];
+    return roots.map(root => {
+      const replies = tree[root.id] || [];
+      const isOpen = !!expanded[root.id];
+      return (
+        <div key={root.id}>
+          <CommentItemView
+            item={root}
+            me={user}
+            onReply={(pid, text)=>{ if(!user) return alert('로그인이 필요합니다.'); setItems(addComment(movieId, user, text, pid)); }}
+            onEdit={(id, text)=> setItems(updateComment(movieId, id, text))}
+            onDelete={(id)=> setItems(deleteComment(movieId, id))}
+            onLike={(id)=>{ if(!user) return alert('로그인이 필요합니다.'); setItems(toggleLikeComment(movieId, id, user.id)); }}
+            allowReply={true}
+          />
+          {replies.length > 0 && (
+            <div style={{ marginLeft: 32, marginTop: 6 }}>
+              <button onClick={()=>toggleExpanded(root.id)} style={{ background:'transparent', border:'none', color:'#7aa2ff', cursor:'pointer' }}>
+                {isOpen ? '답글 숨기기' : `답글 ${replies.length}개 보기`}
+              </button>
+              {isOpen && (
+                <div style={{ marginTop: 8 }}>
+                  {replies.map(rep => (
+                    <CommentItemView key={rep.id}
+                      item={rep}
+                      me={user}
+                      onReply={() => { /* no reply for child (instagram-style) */ }}
+                      onEdit={(id, text)=> setItems(updateComment(movieId, id, text))}
+                      onDelete={(id)=> setItems(deleteComment(movieId, id))}
+                      onLike={(id)=>{ if(!user) return alert('로그인이 필요합니다.'); setItems(toggleLikeComment(movieId, id, user.id)); }}
+                      allowReply={false}
+                    />
+                  ))}
+                </div>
+              )}
+            </div>
+          )}
+        </div>
+      );
+    });
   };
 
   return (
@@ -106,11 +146,10 @@ const CommentsThread: React.FC<Props> = ({ movieId, user }) => {
         onSubmit={(t)=>{ if(!user) return alert('로그인이 필요합니다.'); setItems(addComment(movieId, user, t, null)); }}
       />
       <div style={{ marginTop: 12 }}>
-        {renderChildren(null)}
+        {renderRootList()}
       </div>
     </div>
   );
 };
 
 export default CommentsThread;
-

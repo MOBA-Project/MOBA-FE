@@ -12,9 +12,19 @@ export async function getCurrentUser() {
     const res = await fetch("http://localhost:5001/users/protected", {
       headers: { Authorization: `Bearer ${token}` },
     });
-    if (!res.ok) return null;
-    const data = await res.json();
-    return { id: data.id, nick: data.nick };
+    if (res.ok) {
+      const data = await res.json();
+      return { id: data.id, nick: data.nick };
+    }
+    // Fallback: decode token payload (no verification) to keep UX after server restart
+    const parts = token.split('.')
+    if (parts.length === 3) {
+      try {
+        const payload = JSON.parse(atob(parts[1]));
+        if (payload && payload.id) return { id: payload.id, nick: payload.id };
+      } catch {}
+    }
+    return null;
   } catch (e) {
     return null;
   }
@@ -93,4 +103,3 @@ export function getReviewedMovies(userId) {
   }
   return Array.from(map.values());
 }
-
