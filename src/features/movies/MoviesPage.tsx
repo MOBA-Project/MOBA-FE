@@ -1,11 +1,10 @@
 import React, { useEffect, useState, useRef } from "react";
 import "./MoviesPage.css";
-import Menu from "../../shared/components/Sidebar/Menu";
 import Movie from "./components/MovieCard";
 import { Row } from "antd";
 import { IMAGE_BASE_URL } from "../../config";
-import { useInfiniteQuery } from '@tanstack/react-query';
-import { fetchMovies, searchMovies } from './api';
+import { useInfiniteQuery } from "@tanstack/react-query";
+import { fetchMovies, searchMovies } from "./api";
 
 const Moviespage = () => {
   const [view, setView] = useState<any>();
@@ -21,7 +20,7 @@ const Moviespage = () => {
     isFetchingNextPage,
     isFetching,
   } = useInfiniteQuery({
-    queryKey: ['movies', genre],
+    queryKey: ["movies", genre],
     initialPageParam: 1,
     queryFn: ({ pageParam }) => fetchMovies(Number(pageParam), genre),
     placeholderData: (prev) => prev as any,
@@ -29,7 +28,11 @@ const Moviespage = () => {
       // TMDB 응답: { page, total_pages }
       if (!lastPage) return undefined;
       const { page, total_pages } = lastPage;
-      if (typeof page === 'number' && typeof total_pages === 'number' && page < total_pages) {
+      if (
+        typeof page === "number" &&
+        typeof total_pages === "number" &&
+        page < total_pages
+      ) {
         return page + 1;
       }
       return undefined; // 더 이상 페이지 없음
@@ -45,16 +48,21 @@ const Moviespage = () => {
     hasNextPage: hasNextSearch,
     isLoading: isLoadingSearch,
   } = useInfiniteQuery({
-    queryKey: ['search-movies', query],
+    queryKey: ["search-movies", query],
     enabled: query.trim().length > 0,
     initialPageParam: 1,
     queryFn: ({ pageParam }) => searchMovies(query, Number(pageParam)),
     getNextPageParam: (lastPage: any) => {
       if (!lastPage) return undefined;
       const { page, total_pages } = lastPage;
-      if (typeof page === 'number' && typeof total_pages === 'number' && page < total_pages) return page + 1;
+      if (
+        typeof page === "number" &&
+        typeof total_pages === "number" &&
+        page < total_pages
+      )
+        return page + 1;
       return undefined;
-    }
+    },
   });
 
   const list = query.trim()
@@ -81,11 +89,19 @@ const Moviespage = () => {
           }
         }
       },
-      { root: null, rootMargin: '300px', threshold: 0.01 }
+      { root: null, rootMargin: "300px", threshold: 0.01 }
     );
     obs.observe(el);
     return () => obs.disconnect();
-  }, [query, isFetchingNextPage, hasNextPage, fetchNextPage, isFetchingNextSearch, hasNextSearch, fetchNextSearch]);
+  }, [
+    query,
+    isFetchingNextPage,
+    hasNextPage,
+    fetchNextPage,
+    isFetchingNextSearch,
+    hasNextSearch,
+    fetchNextSearch,
+  ]);
 
   const handleGenreClick = (selectedGenre) => {
     if (genre === selectedGenre) return;
@@ -96,17 +112,27 @@ const Moviespage = () => {
 
   return (
     <div className="mpgContainer">
-      <Menu />
       <div className="mpgTitle">
-        <div style={{ display:'flex', gap:12, alignItems:'center', marginBottom: 12 }}>
+        <div
+          style={{
+            display: "flex",
+            gap: 12,
+            alignItems: "center",
+            marginBottom: 12,
+          }}
+        >
           <input
             value={query}
-            onChange={(e)=>setQuery(e.target.value)}
+            onChange={(e) => setQuery(e.target.value)}
             placeholder="영화 제목 검색"
-            style={{ padding:'8px 10px', flex:1, maxWidth:400 }}
-            onKeyDown={(e)=>{ if(e.key==='Enter' && query.trim()){ /* trigger first page we rely on enabled */ } }}
+            style={{ padding: "8px 10px", flex: 1, maxWidth: 400 }}
+            onKeyDown={(e) => {
+              if (e.key === "Enter" && query.trim()) {
+                /* trigger first page we rely on enabled */
+              }
+            }}
           />
-          {query && (<button onClick={()=>setQuery("")}>검색 지우기</button>)}
+          {query && <button onClick={() => setQuery("")}>검색 지우기</button>}
         </div>
         <div className="genreContainer">
           <ul>

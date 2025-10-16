@@ -1,10 +1,11 @@
 import "./App.css";
+import "./index.css";
 import Login from "features/auth/Login";
 import CreateAccount from "features/auth/Account";
 import Main from "pages/Main/Main.jsx";
 import { BrowserRouter, Route, Routes } from "react-router-dom";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import Menu from "shared/components/Sidebar/Menu";
+import MainLayout from "shared/layouts/MainLayout";
 import ImageSlider from "shared/components/Slider/Slider";
 import Moviespage from "features/movies/MoviesPage";
 import Search from "features/search/Search";
@@ -20,16 +21,20 @@ function App() {
       <QueryClientProvider client={queryClient}>
         <BrowserRouter>
           <Routes>
+            {/* Auth routes (no layout) */}
             <Route path="/" element={<Login />} />
             <Route path="/account" element={<CreateAccount />} />
-            <Route path="/main" element={<Main />} />
-            <Route path="/menu" element={<Menu />} />
-            <Route path="/slider" element={<ImageSlider />} />
-            <Route path="/movies" element={<Moviespage />} />
-            <Route path="/search" element={<Search />} />
-            <Route path="/mypage" element={<MyPage />} />
-            <Route path="/mylist" element={<MyList />} />
-            <Route path="/movie/:movieID" element={<MovieDetail />} />
+
+            {/* App routes with shared layout (menu + content) */}
+            <Route element={<MainLayout />}>
+              <Route path="/main" element={<Main />} />
+              <Route path="/slider" element={<ImageSlider />} />
+              <Route path="/movies" element={<Moviespage />} />
+              <Route path="/search" element={<Search />} />
+              <Route path="/mypage" element={<MyPage />} />
+              <Route path="/mylist" element={<MyList />} />
+              <Route path="/movie/:movieID" element={<MovieDetail />} />
+            </Route>
           </Routes>
         </BrowserRouter>
       </QueryClientProvider>
