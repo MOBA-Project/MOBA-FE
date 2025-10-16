@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { useParams } from "react-router-dom";
+import { useParams, useSearchParams } from "react-router-dom";
 import { IMAGE_BASE_URL } from "../../config";
 import { getCurrentUser, isMovieLiked, toggleLike } from "../../shared/utils/userData";
 import ReviewsSection from '../../features/reviews/ReviewsSection';
@@ -8,6 +8,8 @@ import { fetchMovieDetail } from './api';
 
 function MovieDetail() {
   const { movieID } = useParams<{ movieID: string }>();
+  const [searchParams] = useSearchParams();
+  const focusReviewId = searchParams.get('review') || undefined;
   const [movie, setMovie] = useState<any>(null);
   const [loading, setLoading] = useState(true);
   const [user, setUser] = useState<{ id: string; nick: string } | null>(null);
@@ -69,7 +71,7 @@ function MovieDetail() {
       </div>
 
       <hr style={{ margin: "24px 0" }} />
-      <ReviewsSection movieId={Number(movieID)} user={user} />
+      <ReviewsSection movieId={Number(movieID)} user={user} focusReviewId={focusReviewId} />
     </div>
   );
 }

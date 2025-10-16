@@ -4,8 +4,8 @@ import { Link } from "react-router-dom";
 import { IMAGE_BASE_URL } from "../../../config";
 import {
   getCurrentUser,
-  isMovieLiked,
-  toggleLike,
+  isBookmarked,
+  toggleBookmark,
 } from "../../../shared/utils/userData";
 
 type MovieSummary = {
@@ -23,9 +23,10 @@ type Props = {
   movieName?: string;
   movie?: MovieSummary;
   movieData?: MovieSummary;
+  to?: string; // optional custom link
 };
 
-function Movie({ image, movieID, movieName, movie, movieData }: Props) {
+function Movie({ image, movieID, movieName, movie, movieData, to }: Props) {
   const item = movie || movieData || null;
   const derivedId = movieID || item?.id;
   const derivedTitle = movieName || item?.title || item?.name;
@@ -40,7 +41,7 @@ function Movie({ image, movieID, movieName, movie, movieData }: Props) {
     (async () => {
       const u = await getCurrentUser();
       if (mounted) setUser(u);
-      if (mounted && u && derivedId) setLiked(isMovieLiked(u.id, derivedId));
+      if (mounted && u && derivedId) setLiked(isBookmarked(u.id, derivedId));
     })();
     return () => {
       mounted = false;
@@ -55,14 +56,14 @@ function Movie({ image, movieID, movieName, movie, movieData }: Props) {
       return;
     }
     const summary = (item || { id: derivedId, title: derivedTitle }) as MovieSummary;
-    const res = toggleLike(user.id, summary as any);
+    const res = toggleBookmark(user.id, summary as any);
     setLiked(res.liked);
   };
 
   return (
     <Col lg={6} md={8} xs={24}>
       <div style={{ position: "relative" }}>
-        <Link to={`/movie/${derivedId}`}>
+        <Link to={to || `/movie/${derivedId}`}>
           {derivedPoster ? (
             <img
               style={{ width: "100%", height: "400px", objectFit: "cover" }}
