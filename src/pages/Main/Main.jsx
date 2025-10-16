@@ -6,7 +6,6 @@ import "swiper/css";
 import "swiper/css/effect-coverflow";
 import "swiper/css/pagination";
 import "../Main/Main.css";
-import Menu from "shared/components/Sidebar/Menu";
 
 const Main = () => {
   const swiperRef = useRef(null);
@@ -127,7 +126,6 @@ const Main = () => {
 
   return (
     <>
-      <Menu />
       <div className="backgroundVideo">
         {currentVideoKey && (
           <>
