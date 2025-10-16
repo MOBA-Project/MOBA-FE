@@ -1,6 +1,8 @@
 // Utilities to manage per-user likes and reviews in localStorage
 
 const STORAGE_KEYS = {
+  // For backward-compatibility, bookmarks reuse the previous likedMovies key
+  bookmarks: (userId) => `likedMovies_${userId}`,
   likes: (userId) => `likedMovies_${userId}`,
   reviews: (userId) => `reviews_${userId}`,
 };
@@ -30,9 +32,9 @@ export async function getCurrentUser() {
   }
 }
 
-export function getLikedMovies(userId) {
+export function getBookmarks(userId) {
   if (!userId) return [];
-  const raw = localStorage.getItem(STORAGE_KEYS.likes(userId));
+  const raw = localStorage.getItem(STORAGE_KEYS.bookmarks(userId));
   try {
     return raw ? JSON.parse(raw) : [];
   } catch {
@@ -40,13 +42,13 @@ export function getLikedMovies(userId) {
   }
 }
 
-export function isMovieLiked(userId, movieId) {
-  return getLikedMovies(userId).some((m) => m.id === movieId);
+export function isBookmarked(userId, movieId) {
+  return getBookmarks(userId).some((m) => m.id === movieId);
 }
 
-export function toggleLike(userId, movieSummary) {
+export function toggleBookmark(userId, movieSummary) {
   if (!userId || !movieSummary || !movieSummary.id) return { liked: false, list: [] };
-  const list = getLikedMovies(userId);
+  const list = getBookmarks(userId);
   const exists = list.find((m) => m.id === movieSummary.id);
   let next;
   if (exists) {
@@ -60,9 +62,19 @@ export function toggleLike(userId, movieSummary) {
     };
     next = [summary, ...list];
   }
-  localStorage.setItem(STORAGE_KEYS.likes(userId), JSON.stringify(next));
+  localStorage.setItem(STORAGE_KEYS.bookmarks(userId), JSON.stringify(next));
   return { liked: !exists, list: next };
 }
+
+export function clearBookmarks(userId) {
+  if (!userId) return;
+  localStorage.setItem(STORAGE_KEYS.bookmarks(userId), JSON.stringify([]));
+}
+
+// Backward-compatible aliases
+export const getLikedMovies = getBookmarks;
+export const isMovieLiked = isBookmarked;
+export const toggleLike = toggleBookmark;
 
 export function getReviews(userId) {
   if (!userId) return [];
