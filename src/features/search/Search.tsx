@@ -1,9 +1,8 @@
 import React, { useState } from "react";
-import Menu from "../../shared/components/Sidebar/Menu";
 import { Row } from "antd";
 import Movie from "../movies/components/MovieCard";
-import { useQuery } from '@tanstack/react-query';
-import { searchMovies } from '../movies/api';
+import { useQuery } from "@tanstack/react-query";
+import { searchMovies } from "../movies/api";
 
 const Search = () => {
   const [query, setQuery] = useState<string>("");
@@ -12,11 +11,14 @@ const Search = () => {
   const [error, setError] = useState<string>("");
 
   const { data, refetch, isFetching, isError } = useQuery({
-    queryKey: ['search', query],
+    queryKey: ["search", query],
     enabled: false,
     queryFn: () => searchMovies(query, 1),
   });
-  const doSearch = async () => { if (!query.trim()) return; await refetch(); };
+  const doSearch = async () => {
+    if (!query.trim()) return;
+    await refetch();
+  };
 
   const onKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
     if (e.key === "Enter") doSearch();
@@ -24,7 +26,6 @@ const Search = () => {
 
   return (
     <div className="mpgContainer">
-      <Menu />
       <div className="mpgTitle" style={{ width: "70%", margin: "1rem auto" }}>
         <div style={{ display: "flex", gap: 8, marginBottom: 16 }}>
           <input
@@ -41,7 +42,7 @@ const Search = () => {
         {isFetching && <p>검색 중...</p>}
         {isError && <p>검색 중 오류가 발생했습니다.</p>}
         <Row gutter={[32, 32]}>
-          {(data?.results || []).map((movie:any) => (
+          {(data?.results || []).map((movie: any) => (
             <Movie key={movie.id} movieData={movie} />
           ))}
         </Row>
