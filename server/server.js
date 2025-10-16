@@ -4,6 +4,7 @@ const bodyParser = require("body-parser");
 require("dotenv").config();
 
 const userRoutes = require("./routes/userRoutes");
+const authRoutes = require("./routes/authRoutes");
 const movieRoutes = require("./routes/movieRoutes");
 const reviewRoutes = require("./routes/reviewRoutes");
 
@@ -23,6 +24,7 @@ app.use(cors(corsOptions));
 app.use(bodyParser.json());
 
 app.use("/users", userRoutes);
+app.use("/auth", authRoutes);
 app.use("/movies", movieRoutes);
 app.use("/reviews", reviewRoutes);
 
