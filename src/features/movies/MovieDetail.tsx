@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import { useParams } from "react-router-dom";
 import { IMAGE_BASE_URL } from "../../config";
 import { getCurrentUser, isMovieLiked, toggleLike } from "../../shared/utils/userData";
-import CommentsThread from './components/CommentsThread';
+import ReviewsSection from '../../features/reviews/ReviewsSection';
 import { useQuery } from '@tanstack/react-query';
 import { fetchMovieDetail } from './api';
 
@@ -69,7 +69,7 @@ function MovieDetail() {
       </div>
 
       <hr style={{ margin: "24px 0" }} />
-      <CommentsThread movieId={Number(movieID)} user={user} />
+      <ReviewsSection movieId={Number(movieID)} user={user} />
     </div>
   );
 }
