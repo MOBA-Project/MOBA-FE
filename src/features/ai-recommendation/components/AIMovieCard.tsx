@@ -91,30 +91,32 @@ const AIMovieCard: React.FC<AIMovieCardProps> = ({
         </Link>
 
         {/* 피드백 버튼 */}
-        <div className="aiMovieCardActions">
-          <button
-            className="feedbackButton likeButton"
-            onClick={(e) => {
-              e.preventDefault();
-              onLike(item.movieId);
-            }}
-            disabled={isLiking || isDisliking}
-            title="좋아요"
-          >
-            {isLiking ? '...' : <AiFillHeart size={20} />}
-          </button>
-          <button
-            className="feedbackButton dislikeButton"
-            onClick={(e) => {
-              e.preventDefault();
-              onDislike(item.movieId);
-            }}
-            disabled={isLiking || isDisliking}
-            title="관심 없음"
-          >
-            {isDisliking ? '...' : <BiDislike size={20} />}
-          </button>
-        </div>
+        {showActions && (
+          <div className="aiMovieCardActions">
+            <button
+              className={`feedbackButton likeButton ${isLiked ? 'active' : ''}`}
+              onClick={(e) => {
+                e.preventDefault();
+                onLike(item.movieId);
+              }}
+              disabled={isLiking || isDisliking}
+              title="좋아요"
+            >
+              {isLiking ? '...' : <AiFillHeart size={20} />}
+            </button>
+            <button
+              className={`feedbackButton dislikeButton ${isDisliked ? 'active' : ''}`}
+              onClick={(e) => {
+                e.preventDefault();
+                onDislike(item.movieId);
+              }}
+              disabled={isLiking || isDisliking}
+              title="관심 없음"
+            >
+              {isDisliking ? '...' : <BiDislike size={20} />}
+            </button>
+          </div>
+        )}
 
         {/* 영화 제목 */}
         <Link to={`/movie/${item.movieId}`} className="aiMovieCardTitle">
