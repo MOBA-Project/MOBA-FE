@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import axios from "axios";
+import { login as loginApi } from "features/auth/api";
 import { FaRegUserCircle, FaLock } from "react-icons/fa";
 import ImageSlider from "../../shared/components/Slider/Slider";
 import "../Login/Login.css";
@@ -28,19 +28,10 @@ const Login = () => {
     }
 
     try {
-      const { API_BASE_URL } = await import("../../shared/api/client");
-      const response = await axios.post(`${API_BASE_URL}/auth/login`, {
-        id,
-        password: pw,
-      });
-      if (response.status === 200) {
-        const token = response.data.accessToken;
-        console.log("토큰 발행 성공: ", token);
-        localStorage.setItem("token", token);
-        console.log("토큰을 로컬 스토리지에 저장했습니다");
+      const data = await loginApi({ id, password: pw });
+      if (data?.accessToken) {
         alert("로그인 성공!");
         navigate("/main");
-        // Redirect to another page
       }
     } catch (error) {
       setErrorMessage(
