@@ -1,0 +1,23 @@
+.communityContainer { padding: 16px; }
+.communityHeader { display: flex; justify-content: space-between; align-items: center; }
+.postCard { background: linear-gradient(135deg, rgba(26,26,46,0.3), rgba(31,31,51,0.3)); border: 1px solid #2a2a3e; border-radius: 12px; padding: 12px; cursor: pointer; transition: .2s; }
+.postCard:hover { border-color: #4a5fc1; box-shadow: 0 4px 12px rgba(74,95,193,.2); }
+.postGrid { display: grid; gap: 12px; margin-top: 12px; }
+.postMeta { color: #999; font-size: 13px; }
+.writeBtn { padding: 8px 12px; background: #4a5fc1; color: #fff; border: none; border-radius: 8px; cursor: pointer; }
+.pager { display: flex; justify-content: center; gap: 8px; margin-top: 16px; }
+
+.postCreateForm { display: grid; gap: 12px; max-width: 720px; }
+.fieldLabel { color: #fff; font-weight: 600; font-size: 14px; margin-bottom: 6px; }
+.textInput, .textArea { width: 100%; padding: 10px 12px; background: #1a1a2e; border: 2px solid #2a2a3e; color: #fff; border-radius: 8px; }
+.textArea { min-height: 160px; resize: vertical; }
+.textInput:focus, .textArea:focus { outline: none; border-color: #4a5fc1; box-shadow: 0 0 0 3px rgba(74,95,193,.12); }
+.submitBtn { padding: 12px 20px; background: #4a5fc1; color: #fff; border: none; border-radius: 8px; cursor: pointer; font-weight: 600; }
+.cancelBtn { padding: 12px 20px; background: #30304a; color: #fff; border: none; border-radius: 8px; cursor: pointer; }
+
+.movieSelect { border: 1px dashed #2a2a3e; border-radius: 10px; padding: 12px; }
+.movieSearchList { border: 1px solid #2a2a3e; border-radius: 8px; padding: 8px; margin-top: 8px; max-height: 240px; overflow: auto; }
+.movieItem { display: flex; align-items: center; gap: 8px; padding: 6px; cursor: pointer; border-radius: 6px; }
+.movieItem:hover { background: rgba(74,95,193,.08); }
+
+.detailHeaderActions { display: flex; gap: 8px; margin-left: auto; }

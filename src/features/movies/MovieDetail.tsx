@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { useParams, useSearchParams } from "react-router-dom";
+import { useNavigate, useParams, useSearchParams } from "react-router-dom";
 import { BsBookmark, BsBookmarkFill } from "react-icons/bs";
 import { AiFillStar } from "react-icons/ai";
 import { IMAGE_BASE_URL } from "../../config";
@@ -12,6 +12,7 @@ import "./MoviesDetail.css";
 
 function MovieDetail() {
   const { movieID } = useParams<{ movieID: string }>();
+  const navigate = useNavigate();
   const [searchParams] = useSearchParams();
   const focusReviewId = searchParams.get("review") || undefined;
   const [movie, setMovie] = useState<any>(null);
@@ -118,6 +119,13 @@ function MovieDetail() {
               <span>{liked ? "북마크됨" : "북마크"}</span>
             </button>
           )}
+          <button
+            className="writePostButton"
+            onClick={() => navigate(`/community/new?movieId=${movieID}`)}
+            style={{ marginLeft: 8 }}
+          >
+            감상문 쓰기
+          </button>
         </div>
 
         {/* 영화 정보 */}
