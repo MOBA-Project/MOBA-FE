@@ -66,24 +66,6 @@ const MyList = () => {
       <div className="mylistContent">
         <div className="mylistHeader">
           <h2 style={{ margin: 0 }}>Mylist</h2>
-          <div className="actions">
-            {activeTab === "bookmarks" && (
-              <button
-                onClick={() => {
-                  if (!userId) return;
-                  clearBookmarks(userId);
-                  setBookmarks([]);
-                }}
-              >
-                북마크 비우기
-              </button>
-            )}
-            <button
-              onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}
-            >
-              맨위로
-            </button>
-          </div>
         </div>
         <div className="tabs">
           <button
