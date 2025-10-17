@@ -96,6 +96,25 @@ export interface JobStatusResponse {
   updatedAt: number;
 }
 
+export interface PreviewRequest {
+  favoriteGenres?: number[];
+  likes?: number[];
+  dislikes?: number[];
+  size?: number;
+}
+
+export interface CommitRequest {
+  userId: string;
+  favoriteGenres?: number[];
+  likes?: number[];
+  dislikes?: number[];
+}
+
+export interface CommitResponse {
+  ok: boolean;
+  message?: string;
+}
+
 // API 함수들
 
 /**
@@ -147,4 +166,26 @@ export async function sendFeedback(payload: FeedbackRequest): Promise<FeedbackRe
  */
 export async function getJobStatus(jobId: string): Promise<JobStatusResponse> {
   return apiJson(`${AI_BASE}/reco/jobs/${jobId}`);
+}
+
+/**
+ * 추천 미리보기 (저장 없이 즉시 추천)
+ */
+export async function previewRecommendations(payload: PreviewRequest): Promise<PersonalRecommendationResponse> {
+  return apiJson(`${AI_BASE}/reco/preview`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(payload),
+  });
+}
+
+/**
+ * 선호 정보 일괄 커밋 (저장)
+ */
+export async function commitPreferences(payload: CommitRequest): Promise<CommitResponse> {
+  return apiJson(`${AI_BASE}/reco/commit`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(payload),
+  });
 }
