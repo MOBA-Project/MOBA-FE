@@ -16,6 +16,7 @@ import ProtectedRoute from "shared/routes/ProtectedRoute";
 import CommunityPage from "features/community/CommunityPage";
 import PostDetail from "features/community/PostDetail";
 import PostCreate from "features/community/PostCreate";
+import AIRecommendation from "features/ai-recommendation/AIRecommendation";
 
 const queryClient = new QueryClient();
 
@@ -35,7 +36,8 @@ function App() {
               <Route path="/slider" element={<ImageSlider />} />
               <Route path="/movies" element={<Moviespage />} />
               <Route path="/search" element={<Search />} />
-              <Route element={<ProtectedRoute />}> 
+              <Route path="/ai-recommendation" element={<AIRecommendation />} />
+              <Route element={<ProtectedRoute />}>
                 <Route path="/mypage" element={<MyPage />} />
                 <Route path="/mylist" element={<MyList />} />
                 <Route path="/community/new" element={<PostCreate />} />
