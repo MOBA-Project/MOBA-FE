@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import DOMPurify from "dompurify";
 import axios from "axios"; // Axios를 import
+import { API_BASE_URL } from "../../../shared/api/client";
 import "../AccountForm/LoginForm.css";
 import { useNavigate } from "react-router-dom";
 
@@ -30,12 +31,13 @@ const LoginForm = ({ wiseSaying, currentSlide }) => {
     }
 
     try {
-      const response = await axios.post("http://localhost:5000/login", {
+      const response = await axios.post(`${API_BASE_URL}/auth/login`, {
         id,
-        pw,
+        password: pw,
       });
       if (response.status === 200) {
-        localStorage.setItem("token", response.data.token);
+        const token = response.data?.accessToken || response.data?.token;
+        if (token) localStorage.setItem("token", token);
         alert("로그인 성공!");
         // Redirect to another page
       }
