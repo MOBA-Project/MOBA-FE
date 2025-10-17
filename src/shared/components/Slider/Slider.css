@@ -5,7 +5,8 @@
   width: 100vw;
   height: 100vh;
   overflow: hidden;
-  z-index: -2;
+  /* Place above root background, below content */
+  z-index: 0;
 }
 
 .sliderBg {
@@ -13,5 +14,5 @@
   height: 100vh; /* 화면 높이에 맞게 조정 */
   object-fit: cover; /* 이미지 비율을 유지하면서 요소를 덮도록 설정 */
   pointer-events: none;
-  z-index: -2;
+  z-index: 0;
 }
