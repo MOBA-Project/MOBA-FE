@@ -1,7 +1,6 @@
 import React, { useState } from "react";
 import DOMPurify from "dompurify";
-import axios from "axios"; // Axios를 import
-import { API_BASE_URL } from "../../../shared/api/client";
+import { checkIdAvailable, signup as signupApi } from "../../../features/auth/api";
 import "../AccountForm/LoginForm.css";
 import { Link, useNavigate } from "react-router-dom";
 
@@ -35,16 +34,15 @@ const LoginForm = ({ wiseSaying, currentSlide }) => {
     }
 
     try {
-      // 서버로 아이디 중복 체크 요청
-      const response = await axios.post(`${API_BASE_URL}/auth/check-id`, { id });
-      if (response.status === 200) {
+      const res = await checkIdAvailable(id);
+      if (res.available) {
         setIdError("사용 가능한 아이디입니다.");
         setIsIdCheck(true);
         setIsIdAvailable(true);
         return true;
       }
     } catch (error) {
-      if (error.response && error.response.status === 409) {
+      if (error?.status === 409 || error?.response?.status === 409) {
         setIdError("이미 사용 중인 아이디입니다.");
         setIsIdAvailable(false);
       } else {
@@ -87,13 +85,8 @@ const LoginForm = ({ wiseSaying, currentSlide }) => {
     if (!passwordCheckResult) return;
 
     try {
-      // 서버로 회원가입 요청
-      const response = await axios.post(`${API_BASE_URL}/auth/signup`, {
-        id,
-        password: pw,
-        nickname: nick,
-      });
-      if (response.status === 201) {
+      const resp = await signupApi({ id, password: pw, nickname: nick });
+      if (resp?._id || resp?.id) {
         alert("회원가입이 완료되었습니다.");
         navigate("/");
       }
