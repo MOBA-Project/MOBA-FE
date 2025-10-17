@@ -7,27 +7,37 @@ const STORAGE_KEYS = {
   reviews: (userId) => `reviews_${userId}`,
 };
 
+let _userCache = null;
+let _userCachedAt = 0;
+let _userInflight = null;
+const USER_TTL_MS = 60 * 1000; // 60s
+
 export async function getCurrentUser() {
   try {
-    const token = localStorage.getItem("token");
-    if (!token) return null;
-    const res = await fetch("http://localhost:5001/auth/protected", {
-      headers: { Authorization: `Bearer ${token}` },
-    });
-    if (res.ok) {
-      const data = await res.json();
-      return { id: data.id, nick: data.nickname || data.nick };
-    }
-    // Fallback: decode token payload (no verification) to keep UX after server restart
-    const parts = token.split('.')
-    if (parts.length === 3) {
+    const token = localStorage.getItem("token") || localStorage.getItem("accessToken");
+    if (!token) { _userCache = null; _userCachedAt = 0; return null; }
+    const now = Date.now();
+    if (_userCache && now - _userCachedAt < USER_TTL_MS) return _userCache;
+    if (_userInflight) return _userInflight;
+    const { apiJson } = await import('../api/fetcher');
+    _userInflight = (async () => {
       try {
-        const payload = JSON.parse(atob(parts[1]));
-        if (payload && payload.id) return { id: payload.id, nick: payload.id };
-      } catch {}
-    }
-    return null;
+        try {
+          const data = await apiJson(`/auth/protected`, { headers: { Authorization: `Bearer ${token}` } });
+          _userCache = { id: data.id, nick: data.nickname || data.nick };
+        } catch {
+          const data = await apiJson(`/users/protected`, { headers: { Authorization: `Bearer ${token}` } });
+          _userCache = { id: data.id, nick: data.nickname || data.nick };
+        }
+        _userCachedAt = Date.now();
+        return _userCache;
+      } finally {
+        _userInflight = null;
+      }
+    })();
+    return await _userInflight;
   } catch (e) {
+    _userInflight = null;
     return null;
   }
 }

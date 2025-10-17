@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import DOMPurify from "dompurify";
 import axios from "axios"; // Axios를 import
+import { API_BASE_URL } from "../../../shared/api/client";
 import "../AccountForm/LoginForm.css";
 import { Link, useNavigate } from "react-router-dom";
 
@@ -35,9 +36,7 @@ const LoginForm = ({ wiseSaying, currentSlide }) => {
 
     try {
       // 서버로 아이디 중복 체크 요청
-      const response = await axios.post("http://localhost:5000/check-id", {
-        id,
-      });
+      const response = await axios.post(`${API_BASE_URL}/auth/check-id`, { id });
       if (response.status === 200) {
         setIdError("사용 가능한 아이디입니다.");
         setIsIdCheck(true);
@@ -89,10 +88,10 @@ const LoginForm = ({ wiseSaying, currentSlide }) => {
 
     try {
       // 서버로 회원가입 요청
-      const response = await axios.post("http://localhost:5000/signup", {
+      const response = await axios.post(`${API_BASE_URL}/auth/signup`, {
         id,
-        pw,
-        nick,
+        password: pw,
+        nickname: nick,
       });
       if (response.status === 201) {
         alert("회원가입이 완료되었습니다.");

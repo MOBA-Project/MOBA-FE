@@ -2,8 +2,9 @@ import React, { useEffect, useState } from "react";
 import { Row } from "antd";
 import Movie from "../movies/components/MovieCard";
 import "./MyList.css";
-import { getBookmarks, clearBookmarks } from "../../shared/utils/userData";
 import { fetchMovieDetail } from "../movies/api";
+import * as bookmarksApi from "../../shared/api/bookmarks";
+import { getBookmarks as lsGetBookmarks } from "../../shared/utils/userData";
 
 const MyList = () => {
   const [userId, setUserId] = useState<string>("");
@@ -14,21 +15,33 @@ const MyList = () => {
   );
 
   useEffect(() => {
-    const token = localStorage.getItem("token");
-    if (!token) return;
-    fetch("http://localhost:5001/users/protected", {
-      headers: { Authorization: `Bearer ${token}` },
-    })
-      .then((r) => r.json())
-      .then((data) => {
-        if (!data?.id) return;
-        setUserId(data.id);
-        setBookmarks(getBookmarks(data.id));
+    (async () => {
+      try {
+        const { getCurrentUser } = await import('../../shared/utils/userData');
+        const u = await getCurrentUser();
+        if (!u?.id) return;
+        setUserId(u.id);
+        // Load bookmarks from backend; fallback to localStorage
+        bookmarksApi
+          .list({ page: 1, limit: 100 })
+          .then((resp) => {
+            const mapped = resp.items.map((b: any) => ({
+              id: b.movieId,
+              title: b.movieTitle,
+              poster_path: b.moviePoster,
+              to: `/movie/${b.movieId}`,
+            }));
+            setBookmarks(mapped);
+          })
+          .catch(() => {
+            setBookmarks(lsGetBookmarks(u.id));
+          });
         // Fetch my reviews from backend and hydrate with movie summaries
-        fetch("http://localhost:5001/reviews/user/me", {
-          headers: { Authorization: `Bearer ${token}` },
-        })
-          .then((r) => r.json())
+        import('../../shared/api/fetcher').then(({ apiJson }) =>
+          apiJson(`/reviews/user/me`, {
+            headers: { Authorization: `Bearer ${localStorage.getItem('token') || ''}` },
+          })
+        )
           .then(async (reviews: any[]) => {
             if (!Array.isArray(reviews)) return setReviewed([]);
             const hydrated = await Promise.all(
@@ -45,9 +58,7 @@ const MyList = () => {
                   return {
                     id: rv.movieId,
                     title: `영화 ${rv.movieId}`,
-                    to: `/movie/${rv.movieId}?review=${encodeURIComponent(
-                      rv._id
-                    )}`,
+                    to: `/movie/${rv.movieId}?review=${encodeURIComponent(rv._id)}`,
                   };
                 }
               })
@@ -55,8 +66,8 @@ const MyList = () => {
             setReviewed(hydrated);
           })
           .catch(() => setReviewed([]));
-      })
-      .catch(() => {});
+      } catch {}
+    })();
   }, []);
 
   const list = activeTab === "bookmarks" ? bookmarks : reviewed;
