@@ -23,6 +23,9 @@ const AIMovieCard: React.FC<AIMovieCardProps> = ({
   onDislike,
   isLiking = false,
   isDisliking = false,
+  isLiked = false,
+  isDisliked = false,
+  showActions = true,
 }) => {
   const posterUrl = item.posterPath
     ? `${IMAGE_BASE_URL}w500${item.posterPath}`
