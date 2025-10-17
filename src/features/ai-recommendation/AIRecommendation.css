@@ -408,6 +408,122 @@
   color: #4a5fc1;
 }
 
+/* 피드백 통계 */
+.feedbackStats {
+  display: flex;
+  gap: 12px;
+  margin-bottom: 24px;
+}
+
+.statBadge {
+  padding: 10px 20px;
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: 600;
+}
+
+.statBadge.like {
+  background-color: rgba(239, 68, 68, 0.15);
+  border: 2px solid rgba(239, 68, 68, 0.4);
+  color: #ef4444;
+}
+
+.statBadge.dislike {
+  background-color: rgba(168, 168, 201, 0.15);
+  border: 2px solid rgba(168, 168, 201, 0.4);
+  color: #a8a8c9;
+}
+
+/* 액션 버튼 */
+.actionButtons {
+  display: flex;
+  justify-content: center;
+  margin-top: 48px;
+}
+
+.primaryButton.large {
+  padding: 18px 64px;
+  font-size: 18px;
+  font-weight: 700;
+}
+
+/* 피드백 버튼 active 상태 */
+.feedbackButton.active {
+  opacity: 1;
+  transform: scale(1.05);
+}
+
+.likeButton.active {
+  background-color: #ef4444;
+  color: #ffffff;
+  border-color: #ef4444;
+  box-shadow: 0 0 20px rgba(239, 68, 68, 0.6);
+}
+
+.dislikeButton.active {
+  background-color: #6b6b8f;
+  color: #ffffff;
+  border-color: #6b6b8f;
+  box-shadow: 0 0 20px rgba(107, 107, 143, 0.6);
+}
+
+/* 성공 상태 */
+.successState {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 50vh;
+  text-align: center;
+  padding: 40px;
+}
+
+.successIcon {
+  width: 100px;
+  height: 100px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(135deg, #4a5fc1 0%, #5a6fd1 100%);
+  border-radius: 50%;
+  font-size: 60px;
+  color: #ffffff;
+  margin-bottom: 32px;
+  animation: scaleIn 0.5s ease;
+  box-shadow: 0 8px 32px rgba(74, 95, 193, 0.4);
+}
+
+@keyframes scaleIn {
+  from {
+    opacity: 0;
+    transform: scale(0.5);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+.successState h2 {
+  margin: 0 0 16px 0;
+  color: #ffffff;
+  font-size: 32px;
+  font-weight: 700;
+}
+
+.successState p {
+  margin: 0 0 12px 0;
+  color: #a8a8c9;
+  font-size: 16px;
+  max-width: 500px;
+}
+
+.successNote {
+  font-size: 14px !important;
+  color: #6b6b8f !important;
+  font-style: italic;
+}
+
 /* 반응형 디자인 */
 @media (max-width: 768px) {
   .aiRecoContent {
