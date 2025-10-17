@@ -79,21 +79,6 @@ const Main = () => {
     }
   };
 
-  // auth ready: wait until token exists to avoid no-auth calls then retries
-  const [authed, setAuthed] = useState(false);
-  useEffect(() => {
-    const t = localStorage.getItem('token') || localStorage.getItem('accessToken');
-    setAuthed(!!t);
-    const onStorage = (e) => {
-      if (e.key === 'token' || e.key === 'accessToken') {
-        const nt = localStorage.getItem('token') || localStorage.getItem('accessToken');
-        setAuthed(!!nt);
-      }
-    };
-    window.addEventListener('storage', onStorage);
-    return () => window.removeEventListener('storage', onStorage);
-  }, []);
-
   // ✅ 영화 데이터 가져오기
   useEffect(() => {
     const fetchMovies = async () => {
@@ -114,8 +99,8 @@ const Main = () => {
       }
     };
 
-    if (authed) fetchMovies();
-  }, [authed]);
+    fetchMovies();
+  }, []);
 
   // ✅ 상위 3개 영화 비디오 미리 로딩
   useEffect(() => {
@@ -128,8 +113,8 @@ const Main = () => {
       updateBackgroundVideo(center);
     };
 
-    if (movies.length > 0 && authed) preload();
-  }, [movies, authed]);
+    if (movies.length > 0) preload();
+  }, [movies]);
 
   const handleSlideChange = (swiper) => {
     updateBackgroundVideo(swiper.activeIndex);

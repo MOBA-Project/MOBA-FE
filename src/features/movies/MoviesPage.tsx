@@ -28,7 +28,6 @@ const Moviespage = () => {
     initialPageParam: 1,
     queryFn: ({ pageParam }) => fetchMovies(Number(pageParam), genre),
     placeholderData: (prev) => prev as any,
-    enabled: authed,
     getNextPageParam: (lastPage: any) => {
       // TMDB 응답: { page, total_pages }
       if (!lastPage) return undefined;
@@ -56,7 +55,7 @@ const Moviespage = () => {
     queryKey: ["search-movies", query],
     initialPageParam: 1,
     queryFn: ({ pageParam }) => searchMovies(query, Number(pageParam)),
-    enabled: authed && query.trim().length > 0,
+    enabled: query.trim().length > 0,
     getNextPageParam: (lastPage: any) => {
       if (!lastPage) return undefined;
       const { page, total_pages } = lastPage;
