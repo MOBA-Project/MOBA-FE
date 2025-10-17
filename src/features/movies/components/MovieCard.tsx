@@ -21,9 +21,10 @@ type Props = {
   movie?: MovieSummary;
   movieData?: MovieSummary;
   to?: string; // optional custom link
+  likedInitial?: boolean; // optional precomputed bookmark status
 };
 
-function Movie({ image, movieID, movieName, movie, movieData, to }: Props) {
+function Movie({ image, movieID, movieName, movie, movieData, to, likedInitial }: Props) {
   const item = movie || movieData || null;
   const derivedId = movieID || item?.id;
   const derivedTitle = movieName || item?.title || item?.name;
@@ -39,6 +40,7 @@ function Movie({ image, movieID, movieName, movie, movieData, to }: Props) {
       const u = await getCurrentUser();
       if (mounted) setUser(u);
       if (mounted && u && derivedId) {
+        if (typeof likedInitial === 'boolean') return;
         try {
           const st = await bookmarksApi.getStatus(derivedId);
           if (mounted) setLiked(!!st.bookmarked);
@@ -50,6 +52,12 @@ function Movie({ image, movieID, movieName, movie, movieData, to }: Props) {
     };
   }, [derivedId]);
 
+  // Hydrate liked with initial value if provided
+  useEffect(() => {
+    if (typeof likedInitial === 'boolean') setLiked(likedInitial);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [likedInitial]);
+
   const onToggleLike = (e: React.MouseEvent<HTMLButtonElement>) => {
     e.preventDefault();
     e.stopPropagation();
@@ -57,21 +65,11 @@ function Movie({ image, movieID, movieName, movie, movieData, to }: Props) {
       alert("로그인이 필요합니다.");
       return;
     }
-    const summary = (item || { id: derivedId, title: derivedTitle }) as MovieSummary;
+    const summary = (item || { id: derivedId, title: derivedTitle, poster_path: item?.poster_path || undefined }) as MovieSummary;
     (async () => {
       try {
-        const st = await bookmarksApi.getStatus(summary.id!);
-        if (!st.bookmarked) {
-          await bookmarksApi.create({
-            movieId: summary.id!,
-            movieTitle: summary.title || summary.name || "",
-            moviePoster: summary.poster_path || summary.poster || summary.posterPath || undefined,
-          });
-          setLiked(true);
-        } else if (st.id) {
-          await bookmarksApi.remove(st.id);
-          setLiked(false);
-        }
+        const next = await bookmarksApi.toggle({ id: summary.id!, title: summary.title || summary.name || '', poster_path: summary.poster_path || summary.poster || summary.posterPath });
+        setLiked(next);
       } catch (e) {
         console.error(e);
       }

@@ -88,6 +88,20 @@ exports.status = (req, res) => {
   return res.json({ bookmarked: !!found, id: found ? found.id : null });
 };
 
+// GET /bookmarks/status?movieIds=1,2,3  (bulk)
+exports.bulkStatus = (req, res) => {
+  const userId = getUserIdFromToken(req);
+  if (!userId) return res.status(401).json({ message: "인증이 필요합니다." });
+  const raw = String(req.query.movieIds || '').trim();
+  if (!raw) return res.json({ items: [] });
+  const ids = Array.from(new Set(raw.split(',').map((s) => Number(s)).filter((n) => Number.isFinite(n) && n > 0)));
+  const items = ids.map((id) => {
+    const found = bookmarks.find((b) => b.userId === userId && b.movieId === id);
+    return { movieId: id, bookmarked: !!found, id: found ? found.id : null };
+  });
+  return res.json({ items });
+};
+
 // GET /bookmarks/:id
 exports.findOne = (req, res) => {
   const userId = getUserIdFromToken(req);
@@ -122,4 +136,3 @@ exports.remove = (req, res) => {
   const removed = bookmarks.splice(idx, 1)[0];
   return res.json({ id: removed.id, ok: true });
 };
-
