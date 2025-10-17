@@ -12,6 +12,7 @@ import Search from "features/search/Search";
 import MyPage from "features/profile/Profile";
 import MovieDetail from "features/movies/MovieDetail";
 import MyList from "features/mylist/MyList";
+import ProtectedRoute from "shared/routes/ProtectedRoute";
 import CommunityPage from "features/community/CommunityPage";
 import PostDetail from "features/community/PostDetail";
 import PostCreate from "features/community/PostCreate";
@@ -34,11 +35,13 @@ function App() {
               <Route path="/slider" element={<ImageSlider />} />
               <Route path="/movies" element={<Moviespage />} />
               <Route path="/search" element={<Search />} />
-              <Route path="/mypage" element={<MyPage />} />
-              <Route path="/mylist" element={<MyList />} />
+              <Route element={<ProtectedRoute />}> 
+                <Route path="/mypage" element={<MyPage />} />
+                <Route path="/mylist" element={<MyList />} />
+                <Route path="/community/new" element={<PostCreate />} />
+              </Route>
               <Route path="/movie/:movieID" element={<MovieDetail />} />
               <Route path="/community" element={<CommunityPage />} />
-              <Route path="/community/new" element={<PostCreate />} />
               <Route path="/community/posts/:postId" element={<PostDetail />} />
             </Route>
           </Routes>
