@@ -1,7 +1,6 @@
-export type LoginRequest = { id: string; pw: string };
-export type LoginResponse = { token: string };
+export type LoginRequest = { id: string; password: string };
+export type LoginResponse = { accessToken: string; id: string; nickname: string };
 
 export type CheckIdRequest = { id: string };
 
-export type SignupRequest = { id: string; pw: string; nick: string };
-
+export type SignupRequest = { id: string; password: string; nickname: string };

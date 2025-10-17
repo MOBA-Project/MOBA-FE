@@ -2,11 +2,8 @@ import React, { useEffect, useState } from "react";
 import { Col } from "antd";
 import { Link } from "react-router-dom";
 import { IMAGE_BASE_URL } from "../../../config";
-import {
-  getCurrentUser,
-  isBookmarked,
-  toggleBookmark,
-} from "../../../shared/utils/userData";
+import { getCurrentUser } from "../../../shared/utils/userData";
+import * as bookmarksApi from "../../../shared/api/bookmarks";
 
 type MovieSummary = {
   id: number;
@@ -41,7 +38,12 @@ function Movie({ image, movieID, movieName, movie, movieData, to }: Props) {
     (async () => {
       const u = await getCurrentUser();
       if (mounted) setUser(u);
-      if (mounted && u && derivedId) setLiked(isBookmarked(u.id, derivedId));
+      if (mounted && u && derivedId) {
+        try {
+          const st = await bookmarksApi.getStatus(derivedId);
+          if (mounted) setLiked(!!st.bookmarked);
+        } catch {}
+      }
     })();
     return () => {
       mounted = false;
@@ -56,8 +58,24 @@ function Movie({ image, movieID, movieName, movie, movieData, to }: Props) {
       return;
     }
     const summary = (item || { id: derivedId, title: derivedTitle }) as MovieSummary;
-    const res = toggleBookmark(user.id, summary as any);
-    setLiked(res.liked);
+    (async () => {
+      try {
+        const st = await bookmarksApi.getStatus(summary.id!);
+        if (!st.bookmarked) {
+          await bookmarksApi.create({
+            movieId: summary.id!,
+            movieTitle: summary.title || summary.name || "",
+            moviePoster: summary.poster_path || summary.poster || summary.posterPath || undefined,
+          });
+          setLiked(true);
+        } else if (st.id) {
+          await bookmarksApi.remove(st.id);
+          setLiked(false);
+        }
+      } catch (e) {
+        console.error(e);
+      }
+    })();
   };
 
   return (

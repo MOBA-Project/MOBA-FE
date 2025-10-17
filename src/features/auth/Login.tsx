@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { login } from './api/users';
+import { login } from './api';
 import { useNavigate } from 'react-router-dom';
 import ImageSlider from 'shared/components/Slider/Slider';
 import Logo from 'assets/images/Logo2.png';
@@ -20,8 +20,8 @@ const Login: React.FC = () => {
       return;
     }
     try {
-      const data = await login({ id, pw });
-      localStorage.setItem("token", data.token);
+      const data = await login({ id, password: pw });
+      if (data?.accessToken) localStorage.setItem("token", data.accessToken);
       navigate('/main');
     } catch (err: any) {
       setErrorMessage("아이디 또는 비밀번호가 올바르지 않습니다.");

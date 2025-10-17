@@ -28,12 +28,12 @@ const Login = () => {
     }
 
     try {
-      const response = await axios.post("http://localhost:5001/users/login", {
+      const response = await axios.post("http://localhost:5001/auth/login", {
         id,
-        pw,
+        password: pw,
       });
       if (response.status === 200) {
-        const token = response.data.token;
+        const token = response.data.accessToken;
         console.log("토큰 발행 성공: ", token);
         localStorage.setItem("token", token);
         console.log("토큰을 로컬 스토리지에 저장했습니다");

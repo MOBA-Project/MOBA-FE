@@ -1,5 +1,5 @@
 import { useMutation } from '@tanstack/react-query';
-import { login, signup, checkId } from 'features/auth/api/users';
+import { login, signup, checkIdAvailable as checkId } from 'features/auth/api';
 
 export function useLogin() {
   return useMutation({ mutationFn: login });
@@ -12,4 +12,3 @@ export function useSignup() {
 export function useCheckId() {
   return useMutation({ mutationFn: checkId });
 }
-
