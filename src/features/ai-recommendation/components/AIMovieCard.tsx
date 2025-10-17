@@ -12,6 +12,9 @@ interface AIMovieCardProps {
   onDislike: (movieId: number) => void;
   isLiking?: boolean;
   isDisliking?: boolean;
+  isLiked?: boolean;
+  isDisliked?: boolean;
+  showActions?: boolean;
 }
 
 const AIMovieCard: React.FC<AIMovieCardProps> = ({
