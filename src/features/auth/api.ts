@@ -1,4 +1,4 @@
-// Auth API client with graceful fallback to legacy /users endpoints
+// Auth API client aligned to Swagger `/auth/*` with graceful fallback for dev
 
 const BASE_URL = 'http://localhost:5001';
 
@@ -33,6 +33,29 @@ export async function protectedInfo() {
   if (!res.ok) throw new Error('Not authenticated');
   const data = await res.json();
   return { id: data.id, nickname: data.nick || data.nickname };
+}
+
+export async function login(payload: { id: string; password: string }) {
+  const res = await fetch(`${BASE_URL}/auth/login`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(payload),
+  });
+  if (!res.ok) throw new Error(await res.text());
+  const data = await res.json();
+  // Store access token for subsequent calls
+  if (data?.accessToken && typeof localStorage !== 'undefined') localStorage.setItem('token', data.accessToken);
+  return data;
+}
+
+export async function signup(payload: { id: string; password: string; nickname: string }) {
+  const res = await fetch(`${BASE_URL}/auth/signup`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(payload),
+  });
+  if (!res.ok) throw new Error(await res.text());
+  return res.json();
 }
 
 export async function updateProfile(payload: { nickname?: string; password?: string; currentPassword?: string }) {
@@ -99,4 +122,3 @@ export async function checkIdAvailable(id: string) {
   if (!res.ok) throw new Error(await res.text());
   return { available: true };
 }
-

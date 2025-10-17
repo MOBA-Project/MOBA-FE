@@ -9,12 +9,12 @@ const Menu = () => {
   useEffect(() => {
     const token = localStorage.getItem("token");
     if (!token) return;
-    fetch("http://localhost:5001/users/protected", {
+    fetch("http://localhost:5001/auth/protected", {
       headers: { Authorization: `Bearer ${token}` },
     })
       .then((r) => (r.ok ? r.json() : null))
       .then((data) => {
-        if (data?.nick) setNick(data.nick);
+        if (data?.nickname) setNick(data.nickname);
       })
       .catch(() => {});
   }, []);

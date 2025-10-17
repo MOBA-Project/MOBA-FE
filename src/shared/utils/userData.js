@@ -11,12 +11,12 @@ export async function getCurrentUser() {
   try {
     const token = localStorage.getItem("token");
     if (!token) return null;
-    const res = await fetch("http://localhost:5001/users/protected", {
+    const res = await fetch("http://localhost:5001/auth/protected", {
       headers: { Authorization: `Bearer ${token}` },
     });
     if (res.ok) {
       const data = await res.json();
-      return { id: data.id, nick: data.nick };
+      return { id: data.id, nick: data.nickname || data.nick };
     }
     // Fallback: decode token payload (no verification) to keep UX after server restart
     const parts = token.split('.')

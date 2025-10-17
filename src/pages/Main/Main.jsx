@@ -154,19 +154,6 @@ const Main = () => {
               }}
               onError={() => setVideoLoading(false)}
             />
-            {videoLoading && (
-              <div
-                style={{
-                  position: "absolute",
-                  inset: 0,
-                  display: "grid",
-                  placeItems: "center",
-                  background: "rgba(0,0,0,0.25)",
-                }}
-              >
-                <div style={{ color: "#fff" }}>Loading video…</div>
-              </div>
-            )}
           </>
         )}
       </div>
