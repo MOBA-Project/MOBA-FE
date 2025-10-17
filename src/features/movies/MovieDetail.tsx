@@ -20,23 +20,20 @@ function MovieDetail() {
   const [user, setUser] = useState<{ id: string; nick: string } | null>(null);
   const [liked, setLiked] = useState(false);
 
-  const token = typeof window !== 'undefined' ? (localStorage.getItem('token') || localStorage.getItem('accessToken')) : null;
-  const authed = !!token;
-
   const { data: movieData, isLoading } = useQuery({
     queryKey: ["movie", movieID],
     queryFn: () => fetchMovieDetail(movieID as string),
-    enabled: authed && !!movieID,
+    enabled: !!movieID,
   });
   const { data: credits } = useQuery({
     queryKey: ["movie", movieID, "credits"],
     queryFn: () => fetchMovieCredits(movieID as string),
-    enabled: authed && !!movieID,
+    enabled: !!movieID,
   });
   const { data: similar } = useQuery({
     queryKey: ["movie", movieID, "similar"],
     queryFn: () => fetchSimilarMovies(movieID as string, 1),
-    enabled: authed && !!movieID,
+    enabled: !!movieID,
   });
 
   useEffect(() => {
