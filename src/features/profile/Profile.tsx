@@ -37,6 +37,7 @@ const MyPage = () => {
   const [newNick, setNewNick] = useState("");
   const [newPw, setNewPw] = useState("");
   const [currentPw, setCurrentPw] = useState("");
+  const [currentPwForNick, setCurrentPwForNick] = useState("");
 
   useEffect(() => {
     (async () => {
@@ -87,14 +88,24 @@ const MyPage = () => {
 
   const onSaveNickname = async () => {
     try {
+      if (!newNick.trim()) {
+        message.warning("새 닉네임을 입력하세요.");
+        return;
+      }
+      if (!currentPwForNick) {
+        message.warning("현재 비밀번호를 입력하세요.");
+        return;
+      }
       const res = await updateProfile({
         nickname: newNick || undefined,
+        currentPassword: currentPwForNick,
       });
       const nn = res?.nickname || res?.nick || newNick;
       if (nn) setNickname(nn);
       message.success("닉네임이 변경되었습니다.");
       setShowNicknameModal(false);
       setNewNick("");
+      setCurrentPwForNick("");
     } catch (e) {
       message.error("저장 중 오류가 발생했습니다.");
     }
@@ -259,6 +270,14 @@ const MyPage = () => {
         title="닉네임 변경"
       >
         <input
+          type="password"
+          placeholder="현재 비밀번호"
+          value={currentPwForNick}
+          onChange={(e) => setCurrentPwForNick(e.target.value)}
+          className="modal-input"
+          style={{ marginBottom: "12px" }}
+        />
+        <input
           type="text"
           placeholder="새 닉네임"
           value={newNick}
@@ -276,6 +295,7 @@ const MyPage = () => {
             onClick={() => {
               setShowNicknameModal(false);
               setNewNick("");
+              setCurrentPwForNick("");
             }}
             className="modal-button modal-button-secondary"
           >
