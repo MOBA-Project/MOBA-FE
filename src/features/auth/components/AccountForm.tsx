@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import DOMPurify from 'dompurify';
-import { checkId, signup } from 'features/auth/api/users';
+import { checkIdAvailable as checkId, signup } from 'features/auth/api';
 import './AccountForm.css';
 
 type Saying = { id: number; text: string };
@@ -32,12 +32,16 @@ const AccountForm: React.FC<Props> = ({ wiseSaying, currentSlide }) => {
       return false;
     }
     try {
-      const ok = await checkId({ id });
-      if (ok) {
+      const result = await checkId(id);
+      if (result?.available) {
         setIdError('사용 가능한 아이디입니다.');
         setIsIdCheck(true);
         setIsIdAvailable(true);
         return true;
+      } else {
+        setIdError('이미 사용 중인 아이디입니다.');
+        setIsIdAvailable(false);
+        return false;
       }
     } catch (error: any) {
       if (error?.response?.status === 409) {
@@ -78,7 +82,7 @@ const AccountForm: React.FC<Props> = ({ wiseSaying, currentSlide }) => {
     }
     if (!pwCheckHandler()) return;
     try {
-      const ok = await signup({ id, pw, nick });
+      const ok = await signup({ id, password: pw, nickname: nick });
       if (ok) {
         alert('회원가입이 완료되었습니다. 로그인 해주세요.');
         window.location.href = '/';

@@ -1,15 +1,19 @@
 import { useState, useEffect } from "react";
 import { useParams, useSearchParams } from "react-router-dom";
 import { IMAGE_BASE_URL } from "../../config";
-import { getCurrentUser, isMovieLiked, toggleLike } from "../../shared/utils/userData";
-import ReviewsSection from '../../features/reviews/ReviewsSection';
-import { useQuery } from '@tanstack/react-query';
-import { fetchMovieDetail } from './api';
+import {
+  getCurrentUser,
+  isMovieLiked,
+  toggleLike,
+} from "../../shared/utils/userData";
+import ReviewsSection from "../../features/reviews/ReviewsSection";
+import { useQuery } from "@tanstack/react-query";
+import { fetchMovieDetail } from "./api";
 
 function MovieDetail() {
   const { movieID } = useParams<{ movieID: string }>();
   const [searchParams] = useSearchParams();
-  const focusReviewId = searchParams.get('review') || undefined;
+  const focusReviewId = searchParams.get("review") || undefined;
   const [movie, setMovie] = useState<any>(null);
   const [loading, setLoading] = useState(true);
   const [user, setUser] = useState<{ id: string; nick: string } | null>(null);
@@ -18,10 +22,13 @@ function MovieDetail() {
   const [rating, setRating] = useState(0);
 
   const { data: movieData, isLoading } = useQuery({
-    queryKey: ['movie', movieID],
+    queryKey: ["movie", movieID],
     queryFn: () => fetchMovieDetail(movieID as string),
   });
-  useEffect(() => { setMovie(movieData); setLoading(isLoading); }, [movieData, isLoading]);
+  useEffect(() => {
+    setMovie(movieData);
+    setLoading(isLoading);
+  }, [movieData, isLoading]);
 
   useEffect(() => {
     let mounted = true;
@@ -55,9 +62,6 @@ function MovieDetail() {
     <div style={{ width: "70%", margin: "1rem auto" }}>
       <h2 style={{ display: "flex", alignItems: "center", gap: 12 }}>
         {movie.title}
-        <button onClick={onToggleLike} style={{ padding: "6px 10px" }}>
-          {liked ? "★ 북마크 해제" : "☆ 북마크"}
-        </button>
       </h2>
       <img
         src={`${IMAGE_BASE_URL}w500${movie.poster_path}`}
@@ -71,7 +75,11 @@ function MovieDetail() {
       </div>
 
       <hr style={{ margin: "24px 0" }} />
-      <ReviewsSection movieId={Number(movieID)} user={user} focusReviewId={focusReviewId} />
+      <ReviewsSection
+        movieId={Number(movieID)}
+        user={user}
+        focusReviewId={focusReviewId}
+      />
     </div>
   );
 }

@@ -6,6 +6,7 @@ require("dotenv").config();
 const userRoutes = require("./routes/userRoutes");
 const authRoutes = require("./routes/authRoutes");
 const movieRoutes = require("./routes/movieRoutes");
+const bookmarkRoutes = require("./routes/bookmarkRoutes");
 const reviewRoutes = require("./routes/reviewRoutes");
 
 const app = express();
@@ -27,6 +28,7 @@ app.use("/users", userRoutes);
 app.use("/auth", authRoutes);
 app.use("/movies", movieRoutes);
 app.use("/reviews", reviewRoutes);
+app.use("/bookmarks", bookmarkRoutes);
 
 app.listen(PORT, () => {
   console.log(`서버가 포트 ${PORT}에서 실행 중입니다.`);

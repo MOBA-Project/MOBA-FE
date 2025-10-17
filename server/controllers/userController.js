@@ -112,23 +112,64 @@ exports.authUpdate = (req, res) => {
     if (err)
       return res.status(401).json({ message: "토큰이 유효하지 않습니다." });
 
-    const { nickname, password, currentPassword } = req.body || {};
+    const { nickname, currentPw, newPw } = req.body || {};
     const user = users.find((u) => u.id === decoded.id);
     if (!user) return res.status(404).json({ message: "유저를 찾을 수 없습니다." });
 
-    // 닉네임만 변경할 경우 비번 확인 없이 허용
     if (typeof nickname === "string" && nickname.trim()) {
       user.nick = nickname.trim();
     }
 
-    // 비밀번호 변경이 요청된 경우에만 현재 비밀번호 확인
-    if (typeof password === "string" && password.trim()) {
-      if (!currentPassword || user.pw !== currentPassword) {
+    // Swagger: currentPw required, newPw optional
+    if (currentPw != null && String(currentPw).length > 0) {
+      if (user.pw !== String(currentPw)) {
         return res.status(401).json({ message: "현재 비밀번호가 올바르지 않습니다." });
       }
-      user.pw = password.trim();
+      if (typeof newPw === "string" && newPw.trim()) {
+        user.pw = newPw.trim();
+      }
     }
 
     return res.json({ id: user.id, nickname: user.nick });
   });
+};
+
+// ===== New /auth endpoints (Swagger-aligned) =====
+exports.authSignup = (req, res) => {
+  const { id, password, nickname } = req.body || {};
+  if (!id || !password || !nickname) {
+    return res.status(400).json({ message: "id, password, nickname 필요" });
+  }
+  const exists = users.some((u) => u.id === id);
+  if (exists) return res.status(409).json({ message: "이미 사용 중인 아이디입니다." });
+  const now = new Date().toISOString();
+  users.push({ id, pw: String(password), nick: String(nickname), createdAt: now, _id: `${Date.now()}` });
+  return res.status(201).json({ _id: `${Date.now()}`, id, nickname, createdAt: now });
+};
+
+exports.authLogin = (req, res) => {
+  const { id, password } = req.body || {};
+  const user = users.find((u) => u.id === id && u.pw === String(password));
+  if (!user) return res.status(401).json({ message: "아이디 또는 비밀번호가 올바르지 않습니다." });
+  const accessToken = jwt.sign({ id: user.id }, process.env.SECRET_KEY, { expiresIn: "1h" });
+  return res.json({ accessToken, id: user.id, nickname: user.nick });
+};
+
+exports.authRefresh = (req, res) => {
+  // Demo: issue a new access token if a user can be inferred from any token provided (no real refresh token)
+  const authHeader = req.headers["authorization"];
+  const token = authHeader?.split(" ")[1];
+  if (!token) return res.json({ accessToken: null });
+  try {
+    const decoded = jwt.verify(token, process.env.SECRET_KEY);
+    const accessToken = jwt.sign({ id: decoded.id }, process.env.SECRET_KEY, { expiresIn: "1h" });
+    return res.json({ accessToken });
+  } catch {
+    return res.json({ accessToken: null });
+  }
+};
+
+exports.authLogout = (req, res) => {
+  // Demo: stateless JWT -> just respond OK
+  return res.status(200).json({ ok: true });
 };

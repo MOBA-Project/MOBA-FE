@@ -27,12 +27,12 @@ export const useAuthStore = create<AuthState>()(
         try {
           const token = localStorage.getItem('token') || get().token;
           if (!token) return;
-          const res = await fetch('http://localhost:5001/users/protected', {
+          const res = await fetch('http://localhost:5001/auth/protected', {
             headers: { Authorization: `Bearer ${token}` },
           });
           if (!res.ok) return;
           const data = await res.json();
-          set({ user: { id: data.id, nick: data.nick }, token });
+          set({ user: { id: data.id, nick: data.nickname || data.nick }, token });
         } catch {
           // ignore
         }
@@ -41,4 +41,3 @@ export const useAuthStore = create<AuthState>()(
     { name: 'auth-store' }
   )
 );
-
