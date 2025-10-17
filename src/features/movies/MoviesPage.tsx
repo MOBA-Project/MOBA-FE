@@ -5,12 +5,16 @@ import { Row } from "antd";
 import { IMAGE_BASE_URL } from "../../config";
 import { useInfiniteQuery } from "@tanstack/react-query";
 import { fetchMovies, searchMovies } from "./api";
+import { bulkStatus } from "shared/api/bookmarks";
 
 const Moviespage = () => {
   const [view, setView] = useState<any>();
   const [Movies, setMovies] = useState<any[]>([]);
   const [page, setPage] = useState<number>(1);
   const [genre, setGenre] = useState<string>(""); // 현재 선택된 장르
+
+  const token = typeof window !== 'undefined' ? (localStorage.getItem('token') || localStorage.getItem('accessToken')) : null;
+  const authed = !!token;
 
   const {
     data,
@@ -24,6 +28,7 @@ const Moviespage = () => {
     initialPageParam: 1,
     queryFn: ({ pageParam }) => fetchMovies(Number(pageParam), genre),
     placeholderData: (prev) => prev as any,
+    enabled: authed,
     getNextPageParam: (lastPage: any) => {
       // TMDB 응답: { page, total_pages }
       if (!lastPage) return undefined;
@@ -49,9 +54,9 @@ const Moviespage = () => {
     isLoading: isLoadingSearch,
   } = useInfiniteQuery({
     queryKey: ["search-movies", query],
-    enabled: query.trim().length > 0,
     initialPageParam: 1,
     queryFn: ({ pageParam }) => searchMovies(query, Number(pageParam)),
+    enabled: authed && query.trim().length > 0,
     getNextPageParam: (lastPage: any) => {
       if (!lastPage) return undefined;
       const { page, total_pages } = lastPage;
@@ -68,6 +73,22 @@ const Moviespage = () => {
   const list = query.trim()
     ? (searchData?.pages || []).flatMap((p: any) => p.results || [])
     : (data?.pages || []).flatMap((p: any) => p.results || []);
+
+  // Bulk prefetch bookmark status for current list
+  const [statusMap, setStatusMap] = useState<Map<number, boolean>>(new Map());
+  useEffect(() => {
+    (async () => {
+      if (!authed) return;
+      const ids = Array.from(new Set(list.map((m: any) => m.id).filter((n: any) => typeof n === 'number')));
+      if (ids.length === 0) return;
+      try {
+        const items = await bulkStatus(ids);
+        const next = new Map<number, boolean>();
+        for (const it of items) next.set(it.movieId, !!it.bookmarked);
+        setStatusMap(next);
+      } catch {}
+    })();
+  }, [authed, list]);
 
   const handleNextPage = () => {
     fetchNextPage();
@@ -214,7 +235,7 @@ const Moviespage = () => {
         ) : (
           <Row gutter={[32, 32]}>
             {list.map((movie: any) => (
-              <Movie key={movie.id} movieData={movie} />
+              <Movie key={movie.id} movieData={movie} likedInitial={statusMap.get(movie.id)} />
             ))}
           </Row>
         )}

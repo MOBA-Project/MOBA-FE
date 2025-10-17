@@ -28,7 +28,8 @@ const Login = () => {
     }
 
     try {
-      const response = await axios.post("http://localhost:5001/auth/login", {
+      const { API_BASE_URL } = await import("../../shared/api/client");
+      const response = await axios.post(`${API_BASE_URL}/auth/login`, {
         id,
         password: pw,
       });

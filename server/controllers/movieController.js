@@ -75,6 +75,42 @@ exports.getMovieVideos = async (req, res) => {
   }
 };
 
+// Credits (cast & crew)
+exports.getMovieCredits = async (req, res) => {
+  const movieId = req.params.id;
+  try {
+    const response = await axios.get(`${TMDB_BASE_URL}/movie/${movieId}/credits`, {
+      params: {
+        api_key: TMDB_API_KEY,
+        language: "ko-KR",
+      },
+    });
+    res.json(response.data);
+  } catch (error) {
+    console.error("Error fetching movie credits from TMDb:", error);
+    res.status(500).json({ error: "Failed to fetch movie credits" });
+  }
+};
+
+// Similar movies
+exports.getSimilarMovies = async (req, res) => {
+  const movieId = req.params.id;
+  const { page = 1 } = req.query;
+  try {
+    const response = await axios.get(`${TMDB_BASE_URL}/movie/${movieId}/similar`, {
+      params: {
+        api_key: TMDB_API_KEY,
+        language: "ko-KR",
+        page,
+      },
+    });
+    res.json(response.data);
+  } catch (error) {
+    console.error("Error fetching similar movies from TMDb:", error);
+    res.status(500).json({ error: "Failed to fetch similar movies" });
+  }
+};
+
 // Search movies by query
 exports.searchMovies = async (req, res) => {
   const { query = "", page = 1 } = req.query;

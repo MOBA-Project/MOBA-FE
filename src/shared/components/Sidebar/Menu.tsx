@@ -7,16 +7,13 @@ const Menu = () => {
   const navigate = useNavigate();
   const [nick, setNick] = useState<string>("");
   useEffect(() => {
-    const token = localStorage.getItem("token");
-    if (!token) return;
-    fetch("http://localhost:5001/auth/protected", {
-      headers: { Authorization: `Bearer ${token}` },
-    })
-      .then((r) => (r.ok ? r.json() : null))
-      .then((data) => {
-        if (data?.nickname) setNick(data.nickname);
-      })
-      .catch(() => {});
+    (async () => {
+      try {
+        const { getCurrentUser } = await import('shared/utils/userData');
+        const u = await getCurrentUser();
+        if (u?.nick) setNick(u.nick);
+      } catch {}
+    })();
   }, []);
   const initials = nick ? nick.charAt(0).toUpperCase() : "U";
 
