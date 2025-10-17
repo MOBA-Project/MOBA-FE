@@ -59,9 +59,7 @@ function Movie({ image, movieID, movieName, movie, movieData, to, likedInitial }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [likedInitial]);
 
-  const onToggleLike = (e: React.MouseEvent<HTMLButtonElement>) => {
-    e.preventDefault();
-    e.stopPropagation();
+  const onToggleLike = () => {
     if (!user) {
       alert("로그인이 필요합니다.");
       return;
