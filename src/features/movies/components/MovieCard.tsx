@@ -4,6 +4,7 @@ import { Link } from "react-router-dom";
 import { IMAGE_BASE_URL } from "../../../config";
 import { getCurrentUser } from "../../../shared/utils/userData";
 import * as bookmarksApi from "../../../shared/api/bookmarks";
+import RequireAuthButton from "shared/components/RequireAuthButton";
 
 type MovieSummary = {
   id: number;
@@ -100,8 +101,8 @@ function Movie({ image, movieID, movieName, movie, movieData, to, likedInitial }
               이미지가 없습니다.
             </div>
           )}
-          <button
-            onClick={onToggleLike}
+          <RequireAuthButton
+            onAuthed={onToggleLike}
             aria-label="bookmark"
             title={liked ? "북마크 해제" : "북마크"}
             style={{
@@ -117,7 +118,7 @@ function Movie({ image, movieID, movieName, movie, movieData, to, likedInitial }
             }}
           >
             {liked ? "★" : "☆"}
-          </button>
+          </RequireAuthButton>
         </Link>
       </div>
     </Col>
