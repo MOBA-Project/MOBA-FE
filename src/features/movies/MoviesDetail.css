@@ -1,0 +1,438 @@
+/* 메인 컨테이너 */
+.movieDetailContainer {
+  width: 100%;
+  background-color: #0a0a0a;
+  min-height: 100vh;
+  padding-bottom: 80px;
+}
+
+.movieDetailContent {
+  width: 90%;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding-top: 60px;
+}
+
+/* 영화 헤더 */
+.movieHeader {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  margin-bottom: 32px;
+}
+
+.movieHeader h2 {
+  margin: 0;
+  color: #ffffff;
+  font-size: 36px;
+  font-weight: 700;
+  letter-spacing: -0.5px;
+  line-height: 1.2;
+}
+
+.likeButton {
+  background: none;
+  border: 2px solid #4a5fc1;
+  color: #4a5fc1;
+  border-radius: 8px;
+  padding: 10px 20px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.likeButton:hover {
+  background-color: rgba(74, 95, 193, 0.1);
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(74, 95, 193, 0.3);
+}
+
+.likeButton.liked {
+  background-color: #4a5fc1;
+  color: #ffffff;
+  border-color: #4a5fc1;
+}
+
+.likeButton.liked:hover {
+  background-color: #5a6fd1;
+}
+
+/* 영화 정보 레이아웃 */
+.movieInfo {
+  display: grid;
+  grid-template-columns: 300px 1fr;
+  gap: 40px;
+  margin-bottom: 48px;
+}
+
+.moviePoster {
+  width: 100%;
+  border-radius: 12px;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.5);
+  transition: transform 0.3s ease;
+}
+
+.moviePoster:hover {
+  transform: scale(1.02);
+}
+
+.movieDetails {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  color: #ffffff;
+}
+
+.movieOverview {
+  font-size: 16px;
+  line-height: 1.7;
+  color: #d0d0e0;
+  margin: 0;
+}
+
+.movieMeta {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  padding: 20px;
+  background: linear-gradient(
+    135deg,
+    rgba(26, 26, 46, 0.4) 0%,
+    rgba(31, 31, 51, 0.4) 100%
+  );
+  border-radius: 10px;
+  border: 1px solid #2a2a3e;
+}
+
+.movieMeta p {
+  margin: 0;
+  font-size: 15px;
+  color: #a8a8c9;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.movieMeta p strong {
+  color: #ffffff;
+  font-weight: 600;
+  min-width: 60px;
+}
+
+.movieRating {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 12px;
+  background-color: #4a5fc1;
+  color: #ffffff;
+  border-radius: 6px;
+  font-weight: 600;
+}
+
+/* 구분선 */
+.divider {
+  border: none;
+  height: 1px;
+  background: linear-gradient(
+    to right,
+    transparent,
+    #2a2a3e 20%,
+    #2a2a3e 80%,
+    transparent
+  );
+  margin: 48px 0;
+}
+
+/* 리뷰 섹션 */
+.reviewsSection {
+  margin-top: 48px;
+}
+
+.reviewsSection h3 {
+  color: #ffffff;
+  font-size: 24px;
+  font-weight: 700;
+  margin-bottom: 24px;
+}
+
+/* 출연 섹션 */
+.creditsSection {
+  margin-top: 32px;
+}
+.creditsSection h3 {
+  color: #fff;
+  font-size: 24px;
+  margin: 0 0 16px;
+}
+.castGrid {
+  display: grid;
+  gap: 16px;
+  grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+}
+.castItem {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  color: #ddd;
+}
+.castPhoto {
+  width: 100%;
+  aspect-ratio: 3 / 4;
+  object-fit: cover;
+  border-radius: 8px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
+}
+.castPlaceholder {
+  width: 100%;
+  aspect-ratio: 3 / 4;
+  display: grid;
+  place-items: center;
+  background: #2a2a3e;
+  color: #9aa;
+  border-radius: 8px;
+}
+.castMeta {
+  margin-top: 8px;
+  text-align: center;
+}
+.castName {
+  font-weight: 700;
+  color: #fff;
+}
+.castRole {
+  font-size: 12px;
+  color: #a8a8c9;
+}
+
+/* 유사 영화 섹션 */
+.similarSection {
+  margin-top: 32px;
+}
+.similarSection h3 {
+  color: #fff;
+  font-size: 24px;
+  margin: 0 0 16px;
+}
+.similarGrid {
+  display: grid;
+  gap: 16px;
+  grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+}
+.similarCard {
+  text-decoration: none;
+  color: inherit;
+  background: #111319;
+  border: 1px solid #2a2a3e;
+  border-radius: 10px;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+}
+.similarCard img {
+  width: 100%;
+  aspect-ratio: 2 / 3;
+  object-fit: cover;
+  display: block;
+}
+.similarTitle {
+  padding: 8px;
+  color: #fff;
+  font-size: 14px;
+  font-weight: 600;
+  min-height: 44px;
+}
+.similarPlaceholder {
+  width: 100%;
+  aspect-ratio: 2 / 3;
+  display: grid;
+  place-items: center;
+  background: #2a2a3e;
+  color: #9aa;
+}
+
+/* Wider screens: increase min tile width for fewer rows (cleaner layout) */
+@media (min-width: 768px) {
+  .castGrid,
+  .similarGrid {
+    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  }
+}
+@media (min-width: 1200px) {
+  .castGrid,
+  .similarGrid {
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  }
+}
+
+/* 로딩 상태 */
+.loadingContainer {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 60vh;
+  color: #7b7b9f;
+  gap: 16px;
+}
+
+.loadingSpinner {
+  width: 50px;
+  height: 50px;
+  border: 4px solid #2a2a3e;
+  border-top-color: #4a5fc1;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.loadingText {
+  font-size: 16px;
+  font-weight: 500;
+}
+
+/* 에러 상태 */
+.errorContainer {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 60vh;
+  color: #ff6b6b;
+  gap: 16px;
+  text-align: center;
+}
+
+.errorContainer::before {
+  content: "⚠️";
+  font-size: 64px;
+}
+
+.errorText {
+  font-size: 18px;
+  font-weight: 500;
+}
+
+/* 반응형 디자인 */
+@media (max-width: 968px) {
+  .movieInfo {
+    grid-template-columns: 250px 1fr;
+    gap: 30px;
+  }
+
+  .movieHeader h2 {
+    font-size: 28px;
+  }
+}
+
+@media (max-width: 768px) {
+  .movieDetailContent {
+    width: 95%;
+    padding-top: 40px;
+  }
+
+  .movieInfo {
+    grid-template-columns: 1fr;
+    gap: 24px;
+  }
+
+  .moviePoster {
+    max-width: 300px;
+    margin: 0 auto;
+  }
+
+  .movieHeader {
+    flex-direction: column;
+    gap: 16px;
+  }
+
+  .movieHeader h2 {
+    font-size: 24px;
+  }
+
+  .likeButton {
+    align-self: flex-start;
+  }
+
+  .movieMeta {
+    padding: 16px;
+  }
+}
+
+@media (max-width: 480px) {
+  .movieHeader h2 {
+    font-size: 22px;
+  }
+
+  .movieOverview {
+    font-size: 15px;
+  }
+
+  .movieMeta p {
+    font-size: 14px;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 4px;
+  }
+
+  .movieMeta p strong {
+    min-width: auto;
+  }
+
+  .divider {
+    margin: 32px 0;
+  }
+
+  .reviewsSection h3 {
+    font-size: 20px;
+  }
+}
+
+/* 추가 액션 버튼들 */
+.actionButtons {
+  display: flex;
+  gap: 12px;
+  margin-top: 20px;
+}
+
+.actionButton {
+  padding: 12px 24px;
+  border: 2px solid #2a2a3e;
+  background-color: transparent;
+  color: #a8a8c9;
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.actionButton:hover {
+  border-color: #4a5fc1;
+  color: #ffffff;
+  background-color: rgba(74, 95, 193, 0.1);
+}
+
+.actionButton.primary {
+  background-color: #4a5fc1;
+  border-color: #4a5fc1;
+  color: #ffffff;
+}
+
+.actionButton.primary:hover {
+  background-color: #5a6fd1;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(74, 95, 193, 0.4);
+}
