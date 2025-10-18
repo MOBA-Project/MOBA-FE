@@ -1,0 +1,592 @@
+/* 메인 컨테이너 */
+.aiRecoContainer {
+  width: 100%;
+  min-height: 100vh;
+  background-color: #0a0a0a;
+  overflow-x: hidden;
+}
+
+.aiRecoContent {
+  width: 90%;
+  max-width: 1400px;
+  margin: 0 auto;
+  padding-top: 60px;
+  padding-bottom: 80px;
+}
+
+/* 헤더 */
+.aiRecoHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 32px;
+}
+
+.aiRecoTitle {
+  margin: 0 0 8px 0;
+  color: #ffffff;
+  font-size: 36px;
+  font-weight: 700;
+  letter-spacing: -0.5px;
+}
+
+.aiRecoSubtitle {
+  margin: 0;
+  color: #a8a8c9;
+  font-size: 16px;
+  font-weight: 400;
+}
+
+/* 버튼 스타일 */
+.primaryButton,
+.secondaryButton,
+.submitButton {
+  padding: 12px 24px;
+  border: none;
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.primaryButton {
+  background-color: #4a5fc1;
+  color: #ffffff;
+}
+
+.primaryButton:hover {
+  background-color: #5a6fd1;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(74, 95, 193, 0.4);
+}
+
+.secondaryButton {
+  background-color: transparent;
+  border: 2px solid #2a2a3e;
+  color: #a8a8c9;
+}
+
+.secondaryButton:hover {
+  border-color: #4a5fc1;
+  color: #ffffff;
+  background-color: rgba(74, 95, 193, 0.1);
+}
+
+.primaryButton:disabled,
+.secondaryButton:disabled,
+.submitButton:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  transform: none;
+}
+
+/* Partial 토스트 */
+.partialToast {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 16px 24px;
+  background: linear-gradient(135deg, rgba(74, 95, 193, 0.2) 0%, rgba(90, 111, 209, 0.2) 100%);
+  border: 2px solid #4a5fc1;
+  border-radius: 12px;
+  color: #ffffff;
+  font-size: 15px;
+  font-weight: 600;
+  margin-bottom: 32px;
+  animation: slideInDown 0.3s ease;
+}
+
+@keyframes slideInDown {
+  from {
+    opacity: 0;
+    transform: translateY(-20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.toastSpinner {
+  width: 20px;
+  height: 20px;
+  border: 3px solid rgba(255, 255, 255, 0.3);
+  border-top-color: #ffffff;
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+}
+
+/* 결과 정보 */
+.resultsInfo {
+  margin-bottom: 24px;
+  color: #a8a8c9;
+  font-size: 15px;
+}
+
+.resultsInfo strong {
+  color: #ffffff;
+  font-weight: 700;
+}
+
+/* 상태 메시지 */
+.loadingState,
+.errorState,
+.emptyState {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 50vh;
+  text-align: center;
+  color: #a8a8c9;
+}
+
+.loadingState h2,
+.errorState h2,
+.emptyState h2 {
+  margin: 0 0 12px 0;
+  color: #ffffff;
+  font-size: 28px;
+  font-weight: 700;
+}
+
+.loadingState p,
+.errorState p,
+.emptyState p {
+  margin: 0 0 24px 0;
+  font-size: 16px;
+}
+
+.loadingSpinner {
+  width: 50px;
+  height: 50px;
+  border: 4px solid #2a2a3e;
+  border-top-color: #4a5fc1;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+  margin-bottom: 24px;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* 장르 선택 컴포넌트 */
+.genreSelectorContainer {
+  max-width: 900px;
+  margin: 0 auto;
+}
+
+.genreSelectorTitle {
+  margin: 0 0 12px 0;
+  color: #ffffff;
+  font-size: 32px;
+  font-weight: 700;
+  text-align: center;
+}
+
+.genreSelectorSubtitle {
+  margin: 0 0 48px 0;
+  color: #a8a8c9;
+  font-size: 16px;
+  text-align: center;
+}
+
+.genreGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+  gap: 16px;
+  margin-bottom: 48px;
+}
+
+.genreButton {
+  padding: 16px 20px;
+  background-color: #1f1f33;
+  border: 2px solid #2a2a3e;
+  border-radius: 12px;
+  color: #a8a8c9;
+  font-size: 15px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.25s ease;
+  user-select: none;
+}
+
+.genreButton:hover {
+  background-color: #2a2a3e;
+  border-color: #3a3a5e;
+  color: #ffffff;
+  transform: translateY(-2px);
+}
+
+.genreButton.selected {
+  background-color: #4a5fc1;
+  border-color: #4a5fc1;
+  color: #ffffff;
+  box-shadow: 0 4px 12px rgba(74, 95, 193, 0.3);
+}
+
+.genreButton.selected:hover {
+  background-color: #5a6fd1;
+  border-color: #5a6fd1;
+}
+
+.genreButton:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  transform: none;
+}
+
+.genreActions {
+  display: flex;
+  justify-content: center;
+}
+
+.submitButton {
+  background-color: #4a5fc1;
+  color: #ffffff;
+  padding: 16px 48px;
+  font-size: 16px;
+}
+
+.submitButton:hover:not(:disabled) {
+  background-color: #5a6fd1;
+  transform: translateY(-1px);
+  box-shadow: 0 6px 20px rgba(74, 95, 193, 0.4);
+}
+
+/* AI 영화 카드 */
+.aiMovieCard {
+  position: relative;
+  background-color: #1a1a2e;
+  border-radius: 12px;
+  overflow: hidden;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.aiMovieCard:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.5);
+}
+
+.aiMovieCardLink {
+  display: block;
+  position: relative;
+  text-decoration: none;
+}
+
+.aiMovieCardImage {
+  width: 100%;
+  height: 400px;
+  object-fit: cover;
+  display: block;
+}
+
+.aiMovieCardPlaceholder {
+  width: 100%;
+  height: 400px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: #2a2a3e;
+  color: #6b6b8f;
+  font-size: 14px;
+}
+
+/* 추천 이유 오버레이 */
+.aiMovieCardReasons {
+  position: absolute;
+  top: 12px;
+  left: 12px;
+  right: 12px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  pointer-events: none;
+}
+
+.reasonBadge {
+  padding: 6px 12px;
+  background: rgba(74, 95, 193, 0.9);
+  backdrop-filter: blur(8px);
+  border-radius: 6px;
+  color: #ffffff;
+  font-size: 12px;
+  font-weight: 600;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+}
+
+/* 추천 점수 */
+.aiMovieCardScore {
+  position: absolute;
+  bottom: 12px;
+  right: 12px;
+  padding: 8px 16px;
+  background: rgba(26, 26, 46, 0.95);
+  backdrop-filter: blur(8px);
+  border: 2px solid #4a5fc1;
+  border-radius: 8px;
+  color: #ffffff;
+  font-size: 13px;
+  font-weight: 700;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+  pointer-events: none;
+}
+
+/* 피드백 버튼 */
+.aiMovieCardActions {
+  display: flex;
+  gap: 8px;
+  padding: 12px;
+  background-color: #1f1f33;
+}
+
+.feedbackButton {
+  flex: 1;
+  padding: 10px;
+  border: none;
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.likeButton {
+  background-color: rgba(239, 68, 68, 0.1);
+  color: #ef4444;
+  border: 2px solid rgba(239, 68, 68, 0.3);
+}
+
+.likeButton:hover:not(:disabled) {
+  background-color: #ef4444;
+  color: #ffffff;
+  border-color: #ef4444;
+  transform: translateY(-1px);
+}
+
+.dislikeButton {
+  background-color: rgba(168, 168, 201, 0.1);
+  color: #a8a8c9;
+  border: 2px solid rgba(168, 168, 201, 0.3);
+}
+
+.dislikeButton:hover:not(:disabled) {
+  background-color: #6b6b8f;
+  color: #ffffff;
+  border-color: #6b6b8f;
+  transform: translateY(-1px);
+}
+
+.feedbackButton:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  transform: none;
+}
+
+/* 영화 제목 */
+.aiMovieCardTitle {
+  display: block;
+  padding: 12px;
+  background-color: #1f1f33;
+  color: #ffffff;
+  font-size: 15px;
+  font-weight: 600;
+  text-decoration: none;
+  text-align: center;
+  min-height: 48px;
+  transition: color 0.2s ease;
+}
+
+.aiMovieCardTitle:hover {
+  color: #4a5fc1;
+}
+
+/* 피드백 통계 */
+.feedbackStats {
+  display: flex;
+  gap: 12px;
+  margin-bottom: 24px;
+}
+
+.statBadge {
+  padding: 10px 20px;
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: 600;
+}
+
+.statBadge.like {
+  background-color: rgba(239, 68, 68, 0.15);
+  border: 2px solid rgba(239, 68, 68, 0.4);
+  color: #ef4444;
+}
+
+.statBadge.dislike {
+  background-color: rgba(168, 168, 201, 0.15);
+  border: 2px solid rgba(168, 168, 201, 0.4);
+  color: #a8a8c9;
+}
+
+/* 액션 버튼 */
+.actionButtons {
+  display: flex;
+  justify-content: center;
+  margin-top: 48px;
+}
+
+.primaryButton.large {
+  padding: 18px 64px;
+  font-size: 18px;
+  font-weight: 700;
+}
+
+/* 피드백 버튼 active 상태 */
+.feedbackButton.active {
+  opacity: 1;
+  transform: scale(1.05);
+}
+
+.likeButton.active {
+  background-color: #ef4444;
+  color: #ffffff;
+  border-color: #ef4444;
+  box-shadow: 0 0 20px rgba(239, 68, 68, 0.6);
+}
+
+.dislikeButton.active {
+  background-color: #6b6b8f;
+  color: #ffffff;
+  border-color: #6b6b8f;
+  box-shadow: 0 0 20px rgba(107, 107, 143, 0.6);
+}
+
+/* 성공 상태 */
+.successState {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 50vh;
+  text-align: center;
+  padding: 40px;
+}
+
+.successIcon {
+  width: 100px;
+  height: 100px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(135deg, #4a5fc1 0%, #5a6fd1 100%);
+  border-radius: 50%;
+  font-size: 60px;
+  color: #ffffff;
+  margin-bottom: 32px;
+  animation: scaleIn 0.5s ease;
+  box-shadow: 0 8px 32px rgba(74, 95, 193, 0.4);
+}
+
+@keyframes scaleIn {
+  from {
+    opacity: 0;
+    transform: scale(0.5);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+.successState h2 {
+  margin: 0 0 16px 0;
+  color: #ffffff;
+  font-size: 32px;
+  font-weight: 700;
+}
+
+.successState p {
+  margin: 0 0 12px 0;
+  color: #a8a8c9;
+  font-size: 16px;
+  max-width: 500px;
+}
+
+.successNote {
+  font-size: 14px !important;
+  color: #6b6b8f !important;
+  font-style: italic;
+}
+
+/* 반응형 디자인 */
+@media (max-width: 768px) {
+  .aiRecoContent {
+    width: 95%;
+    padding-top: 40px;
+  }
+
+  .aiRecoHeader {
+    flex-direction: column;
+    gap: 16px;
+  }
+
+  .aiRecoTitle {
+    font-size: 28px;
+  }
+
+  .aiRecoSubtitle {
+    font-size: 14px;
+  }
+
+  .genreGrid {
+    grid-template-columns: repeat(auto-fill, minmax(110px, 1fr));
+    gap: 12px;
+  }
+
+  .genreButton {
+    padding: 12px 16px;
+    font-size: 14px;
+  }
+
+  .aiMovieCardImage,
+  .aiMovieCardPlaceholder {
+    height: 320px;
+  }
+}
+
+@media (max-width: 480px) {
+  .aiRecoTitle {
+    font-size: 24px;
+  }
+
+  .partialToast {
+    padding: 12px 16px;
+    font-size: 14px;
+  }
+
+  .genreGrid {
+    grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
+    gap: 10px;
+  }
+
+  .genreButton {
+    padding: 10px 14px;
+    font-size: 13px;
+  }
+
+  .aiMovieCardImage,
+  .aiMovieCardPlaceholder {
+    height: 280px;
+  }
+
+  .reasonBadge {
+    font-size: 11px;
+    padding: 5px 10px;
+  }
+}
