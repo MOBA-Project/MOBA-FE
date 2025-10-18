@@ -4,10 +4,10 @@ import { getCurrentUser } from '../../shared/utils/userData';
 import GenreSelector from './components/GenreSelector';
 import AIMovieCard from './components/AIMovieCard';
 import { useCandidates } from './hooks/useAIRecommendation';
-import { previewRecommendations, commitPreferences, PersonalRecommendationItem } from './api';
+import { previewRecommendations, commitPreferences, PersonalRecommendationItem, getPersonalRecommendation, getJobStatus } from './api';
 import './AIRecommendation.css';
 
-type Step = 'genre' | 'feedback' | 'preview' | 'confirmed';
+type Step = 'genre' | 'feedback' | 'preview' | 'confirmed' | 'final';
 
 const AIRecommendation: React.FC = () => {
   const [user, setUser] = useState<{ id: string; nick: string } | null>(null);
@@ -25,6 +25,11 @@ const AIRecommendation: React.FC = () => {
   const [isPreviewLoading, setIsPreviewLoading] = useState(false);
   const [isCommitLoading, setIsCommitLoading] = useState(false);
   const [isPartial, setIsPartial] = useState(false);
+
+  // 최종 추천 결과
+  const [finalResults, setFinalResults] = useState<PersonalRecommendationItem[]>([]);
+  const [isFinalLoading, setIsFinalLoading] = useState(false);
+  const [jobId, setJobId] = useState<string | null>(null);
 
   // 사용자 정보 로드
   useEffect(() => {
@@ -104,12 +109,14 @@ const AIRecommendation: React.FC = () => {
 
     setIsCommitLoading(true);
     try {
-      await commitPreferences({
+      const response = await commitPreferences({
         userId,
         favoriteGenres: selectedGenres,
         likes,
         dislikes,
       });
+
+      // 백그라운드 작업 ID가 있으면 저장
       setStep('confirmed');
     } catch (err) {
       console.error('확정 실패:', err);
@@ -118,6 +125,78 @@ const AIRecommendation: React.FC = () => {
       setIsCommitLoading(false);
     }
   };
+
+  // confirmed 단계에서 자동으로 최종 추천 가져오기
+  useEffect(() => {
+    if (step === 'confirmed' && userId) {
+      const fetchFinalRecommendations = async () => {
+        setIsFinalLoading(true);
+
+        // 백그라운드 분석을 위해 약간의 지연 추가 (3초)
+        await new Promise(resolve => setTimeout(resolve, 3000));
+
+        try {
+          const response = await getPersonalRecommendation(userId, 20);
+          setFinalResults(response.items);
+          setIsPartial(response.meta.partial);
+
+          // jobId가 있으면 폴링 시작
+          if (response.meta.jobId) {
+            setJobId(response.meta.jobId);
+          } else {
+            // jobId가 없으면 바로 final 단계로
+            setStep('final');
+          }
+        } catch (err) {
+          console.error('최종 추천 조회 실패:', err);
+          alert('추천 영화를 불러오지 못했습니다.');
+        } finally {
+          setIsFinalLoading(false);
+        }
+      };
+
+      fetchFinalRecommendations();
+    }
+  }, [step, userId]);
+
+  // Job 상태 폴링
+  useEffect(() => {
+    if (!jobId || step !== 'confirmed') return;
+
+    const pollInterval = setInterval(async () => {
+      try {
+        const status = await getJobStatus(jobId);
+
+        if (status.status === 'completed') {
+          // Job 완료되면 최종 추천 다시 가져오기
+          if (userId) {
+            const response = await getPersonalRecommendation(userId, 20);
+            setFinalResults(response.items);
+            setIsPartial(false);
+            setStep('final');
+          }
+          clearInterval(pollInterval);
+        } else if (status.status === 'failed') {
+          // Job 실패해도 기존 결과로 진행
+          setStep('final');
+          clearInterval(pollInterval);
+        }
+      } catch (err) {
+        console.error('Job 상태 확인 실패:', err);
+      }
+    }, 2000); // 2초마다 확인
+
+    // 30초 후 타임아웃
+    const timeout = setTimeout(() => {
+      clearInterval(pollInterval);
+      setStep('final');
+    }, 30000);
+
+    return () => {
+      clearInterval(pollInterval);
+      clearTimeout(timeout);
+    };
+  }, [jobId, step, userId]);
 
   // 미리보기에서 다시 피드백 단계로
   const handleBackToFeedback = () => {
@@ -305,7 +384,7 @@ const AIRecommendation: React.FC = () => {
     );
   }
 
-  // 4단계: 확정 완료
+  // 4단계: 확정 완료 (분석 중)
   if (step === 'confirmed') {
     return (
       <div className="aiRecoContainer">
@@ -317,12 +396,68 @@ const AIRecommendation: React.FC = () => {
             <p className="successNote">
               백그라운드에서 영화 분석이 진행 중입니다. 잠시 후 더 정확한 추천을 받을 수 있습니다.
             </p>
-            <div className="actionButtons">
+            {isFinalLoading && (
+              <div className="loadingState">
+                <div className="loadingSpinner"></div>
+                <p>개인화 추천을 생성하는 중...</p>
+              </div>
+            )}
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  // 5단계: 최종 추천 결과
+  if (step === 'final') {
+    return (
+      <div className="aiRecoContainer">
+        <div className="aiRecoContent">
+          <div className="aiRecoHeader">
+            <div>
+              <h1 className="aiRecoTitle">AI 개인화 추천</h1>
+              <p className="aiRecoSubtitle">
+                당신의 취향을 바탕으로 선별된 맞춤 영화 추천입니다
+              </p>
+            </div>
+            <button className="secondaryButton" onClick={handleReset}>
+              추천 다시 받기
+            </button>
+          </div>
+
+          {isPartial && (
+            <div className="partialToast">
+              <div className="toastSpinner"></div>
+              <span>더 정확한 추천을 위해 분석이 진행 중입니다...</span>
+            </div>
+          )}
+
+          {finalResults.length === 0 ? (
+            <div className="emptyState">
+              <h2>추천 결과가 없습니다</h2>
+              <p>다시 시도해주세요.</p>
               <button className="primaryButton" onClick={handleReset}>
-                추천 다시 받기
+                처음부터 다시
               </button>
             </div>
-          </div>
+          ) : (
+            <>
+              <div className="resultsInfo">
+                총 <strong>{finalResults.length}개</strong>의 맞춤 추천 영화
+              </div>
+              <Row gutter={[32, 32]}>
+                {finalResults.map((item) => (
+                  <AIMovieCard
+                    key={item.movieId}
+                    item={item}
+                    onLike={() => {}}
+                    onDislike={() => {}}
+                    showActions={false}
+                  />
+                ))}
+              </Row>
+            </>
+          )}
         </div>
       </div>
     );
