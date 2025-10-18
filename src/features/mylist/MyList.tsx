@@ -5,14 +5,21 @@ import "./MyList.css";
 import { fetchMovieDetail } from "../movies/api";
 import * as bookmarksApi from "../../shared/api/bookmarks";
 import { getBookmarks as lsGetBookmarks } from "../../shared/utils/userData";
+import { getRecommendationHistory, RecommendationHistoryItem, GENRE_MAP } from "../ai-recommendation/api";
 
 const MyList = () => {
   const [userId, setUserId] = useState<string>("");
   const [bookmarks, setBookmarks] = useState<any[]>([]);
   const [reviewed, setReviewed] = useState<any[]>([]);
-  const [activeTab, setActiveTab] = useState<"bookmarks" | "reviewed">(
+  const [recommended, setRecommended] = useState<any[]>([]);
+  const [activeTab, setActiveTab] = useState<"bookmarks" | "reviewed" | "recommended">(
     "bookmarks"
   );
+
+  // 추천 이력 필터
+  const [selectedDate, setSelectedDate] = useState<string>("all");
+  const [selectedGenre, setSelectedGenre] = useState<number | null>(null);
+  const [isLoadingRecommended, setIsLoadingRecommended] = useState(false);
 
   useEffect(() => {
     (async () => {
