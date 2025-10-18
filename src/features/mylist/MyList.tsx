@@ -99,7 +99,7 @@ const MyList = () => {
       }
 
       const response = await getRecommendationHistory(filters);
-      const mapped = response.items.map((item: RecommendationHistoryItem) => ({
+      const mapped = response.items.map((item: RecommendationHistoryItem, index: number) => ({
         id: item.movieId,
         title: item.title,
         poster_path: item.posterPath,
@@ -107,6 +107,8 @@ const MyList = () => {
         recommendedAt: item.recommendedAt,
         score: item.score,
         reasons: item.reasons,
+        // 고유 키 생성: movieId + recommendedAt 조합
+        uniqueKey: `${item.movieId}-${item.recommendedAt}-${index}`,
       }));
       setRecommended(mapped);
     } catch (err) {
@@ -229,7 +231,13 @@ const MyList = () => {
                   : "비어있어요. 마음에 드는 영화를 추가해보세요."}
               </div>
             ) : (
-              list.map((m) => <Movie key={m.id} movieData={m} to={m.to} />)
+              list.map((m) => (
+                <Movie
+                  key={activeTab === "recommended" && m.uniqueKey ? m.uniqueKey : m.id}
+                  movieData={m}
+                  to={m.to}
+                />
+              ))
             )}
           </Row>
         )}
