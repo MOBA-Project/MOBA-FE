@@ -83,33 +83,19 @@ const MyList = () => {
 
     setIsLoadingRecommended(true);
     try {
-      const filters: any = { userId, page: 1, limit: 100 };
+      const filters: RecommendationHistoryFilters = {
+        userId,
+        limit: 100,
+      };
 
-      // 날짜 필터 적용
-      if (selectedDate !== "all") {
-        const now = new Date();
-        let startDate: Date;
-
-        switch (selectedDate) {
-          case "today":
-            startDate = new Date(now.setHours(0, 0, 0, 0));
-            break;
-          case "week":
-            startDate = new Date(now.setDate(now.getDate() - 7));
-            break;
-          case "month":
-            startDate = new Date(now.setMonth(now.getMonth() - 1));
-            break;
-          default:
-            startDate = new Date(0);
-        }
-
-        filters.startDate = startDate.toISOString();
+      // 기간 필터 적용
+      if (selectedPeriod !== "all") {
+        filters.period = selectedPeriod;
       }
 
       // 장르 필터 적용
-      if (selectedGenre) {
-        filters.genres = [selectedGenre];
+      if (selectedGenre !== null) {
+        filters.genreId = selectedGenre;
       }
 
       const response = await getRecommendationHistory(filters);
@@ -136,7 +122,7 @@ const MyList = () => {
     if (activeTab === "recommended" && userId) {
       fetchRecommendations();
     }
-  }, [activeTab, userId, selectedDate, selectedGenre]);
+  }, [activeTab, userId, selectedPeriod, selectedGenre]);
 
   const list =
     activeTab === "bookmarks" ? bookmarks :
@@ -183,26 +169,26 @@ const MyList = () => {
               <label className="filterLabel">기간</label>
               <div className="filterButtons">
                 <button
-                  className={selectedDate === "all" ? "filterBtn active" : "filterBtn"}
-                  onClick={() => setSelectedDate("all")}
+                  className={selectedPeriod === "all" ? "filterBtn active" : "filterBtn"}
+                  onClick={() => setSelectedPeriod("all")}
                 >
                   전체
                 </button>
                 <button
-                  className={selectedDate === "today" ? "filterBtn active" : "filterBtn"}
-                  onClick={() => setSelectedDate("today")}
+                  className={selectedPeriod === "today" ? "filterBtn active" : "filterBtn"}
+                  onClick={() => setSelectedPeriod("today")}
                 >
                   오늘
                 </button>
                 <button
-                  className={selectedDate === "week" ? "filterBtn active" : "filterBtn"}
-                  onClick={() => setSelectedDate("week")}
+                  className={selectedPeriod === "7d" ? "filterBtn active" : "filterBtn"}
+                  onClick={() => setSelectedPeriod("7d")}
                 >
                   최근 7일
                 </button>
                 <button
-                  className={selectedDate === "month" ? "filterBtn active" : "filterBtn"}
-                  onClick={() => setSelectedDate("month")}
+                  className={selectedPeriod === "30d" ? "filterBtn active" : "filterBtn"}
+                  onClick={() => setSelectedPeriod("30d")}
                 >
                   최근 30일
                 </button>
