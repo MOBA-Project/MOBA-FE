@@ -138,7 +138,16 @@ const MyList = () => {
     }
   }, [activeTab, userId, selectedDate, selectedGenre]);
 
-  const list = activeTab === "bookmarks" ? bookmarks : reviewed;
+  const list =
+    activeTab === "bookmarks" ? bookmarks :
+    activeTab === "reviewed" ? reviewed :
+    recommended;
+
+  // 장르 옵션 생성
+  const genreOptions = Object.entries(GENRE_MAP).map(([key, id]) => ({
+    label: key.charAt(0).toUpperCase() + key.slice(1),
+    value: id,
+  }));
 
   return (
     <div className="mylistContainer">
@@ -159,16 +168,85 @@ const MyList = () => {
           >
             리뷰 ({reviewed.length})
           </button>
+          <button
+            className={activeTab === "recommended" ? "tab active" : "tab"}
+            onClick={() => setActiveTab("recommended")}
+          >
+            추천 받은 영화 ({recommended.length})
+          </button>
         </div>
-        <Row gutter={[32, 32]}>
-          {list.length === 0 ? (
-            <div className="emptyBox">
-              비어있어요. 마음에 드는 영화를 추가해보세요.
+
+        {/* 추천 영화 탭 필터 */}
+        {activeTab === "recommended" && (
+          <div className="filterBar">
+            <div className="filterGroup">
+              <label className="filterLabel">기간</label>
+              <div className="filterButtons">
+                <button
+                  className={selectedDate === "all" ? "filterBtn active" : "filterBtn"}
+                  onClick={() => setSelectedDate("all")}
+                >
+                  전체
+                </button>
+                <button
+                  className={selectedDate === "today" ? "filterBtn active" : "filterBtn"}
+                  onClick={() => setSelectedDate("today")}
+                >
+                  오늘
+                </button>
+                <button
+                  className={selectedDate === "week" ? "filterBtn active" : "filterBtn"}
+                  onClick={() => setSelectedDate("week")}
+                >
+                  최근 7일
+                </button>
+                <button
+                  className={selectedDate === "month" ? "filterBtn active" : "filterBtn"}
+                  onClick={() => setSelectedDate("month")}
+                >
+                  최근 30일
+                </button>
+              </div>
             </div>
-          ) : (
-            list.map((m) => <Movie key={m.id} movieData={m} to={m.to} />)
-          )}
-        </Row>
+
+            <div className="filterGroup">
+              <label className="filterLabel">장르</label>
+              <div className="filterButtons genreScroll">
+                <button
+                  className={selectedGenre === null ? "filterBtn active" : "filterBtn"}
+                  onClick={() => setSelectedGenre(null)}
+                >
+                  전체
+                </button>
+                {genreOptions.map((genre) => (
+                  <button
+                    key={genre.value}
+                    className={selectedGenre === genre.value ? "filterBtn active" : "filterBtn"}
+                    onClick={() => setSelectedGenre(genre.value)}
+                  >
+                    {genre.label}
+                  </button>
+                ))}
+              </div>
+            </div>
+          </div>
+        )}
+
+        {isLoadingRecommended && activeTab === "recommended" ? (
+          <div className="loading">추천 이력을 불러오는 중...</div>
+        ) : (
+          <Row gutter={[32, 32]}>
+            {list.length === 0 ? (
+              <div className="emptyBox">
+                {activeTab === "recommended"
+                  ? "아직 추천 받은 영화가 없어요. AI 추천을 받아보세요!"
+                  : "비어있어요. 마음에 드는 영화를 추가해보세요."}
+              </div>
+            ) : (
+              list.map((m) => <Movie key={m.id} movieData={m} to={m.to} />)
+            )}
+          </Row>
+        )}
       </div>
     </div>
   );
