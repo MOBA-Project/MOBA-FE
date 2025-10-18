@@ -77,6 +77,67 @@ const MyList = () => {
     })();
   }, []);
 
+  // 추천 이력 가져오기
+  const fetchRecommendations = async () => {
+    if (!userId) return;
+
+    setIsLoadingRecommended(true);
+    try {
+      const filters: any = { userId, page: 1, limit: 100 };
+
+      // 날짜 필터 적용
+      if (selectedDate !== "all") {
+        const now = new Date();
+        let startDate: Date;
+
+        switch (selectedDate) {
+          case "today":
+            startDate = new Date(now.setHours(0, 0, 0, 0));
+            break;
+          case "week":
+            startDate = new Date(now.setDate(now.getDate() - 7));
+            break;
+          case "month":
+            startDate = new Date(now.setMonth(now.getMonth() - 1));
+            break;
+          default:
+            startDate = new Date(0);
+        }
+
+        filters.startDate = startDate.toISOString();
+      }
+
+      // 장르 필터 적용
+      if (selectedGenre) {
+        filters.genres = [selectedGenre];
+      }
+
+      const response = await getRecommendationHistory(filters);
+      const mapped = response.items.map((item: RecommendationHistoryItem) => ({
+        id: item.movieId,
+        title: item.title,
+        poster_path: item.posterPath,
+        to: `/movie/${item.movieId}`,
+        recommendedAt: item.recommendedAt,
+        score: item.score,
+        reasons: item.reasons,
+      }));
+      setRecommended(mapped);
+    } catch (err) {
+      console.error("추천 이력 조회 실패:", err);
+      setRecommended([]);
+    } finally {
+      setIsLoadingRecommended(false);
+    }
+  };
+
+  // 추천 탭 활성화 또는 필터 변경 시 데이터 로드
+  useEffect(() => {
+    if (activeTab === "recommended" && userId) {
+      fetchRecommendations();
+    }
+  }, [activeTab, userId, selectedDate, selectedGenre]);
+
   const list = activeTab === "bookmarks" ? bookmarks : reviewed;
 
   return (
