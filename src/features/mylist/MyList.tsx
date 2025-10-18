@@ -5,6 +5,7 @@ import "./MyList.css";
 import { fetchMovieDetail } from "../movies/api";
 import * as bookmarksApi from "../../shared/api/bookmarks";
 import { getBookmarks as lsGetBookmarks } from "../../shared/utils/userData";
+import { getRecommendationHistory, RecommendationHistoryItem, RecommendationHistoryFilters, GENRE_MAP } from "../ai-recommendation/api";
 
 const MyList = () => {
   const [userId, setUserId] = useState<string>("");
