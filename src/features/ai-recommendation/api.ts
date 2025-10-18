@@ -192,48 +192,49 @@ export async function commitPreferences(payload: CommitRequest): Promise<CommitR
 
 // 추천 이력 관련 타입
 export interface RecommendationHistoryItem {
+  userId: string;
   movieId: number;
   title: string;
   posterPath?: string;
   score: number;
+  position?: number;
   reasons?: string[];
   genres?: number[];
   popularity?: number;
   voteAverage?: number;
   releaseDate?: string;
+  source?: string;
   recommendedAt: string; // ISO date string
 }
 
 export interface RecommendationHistoryResponse {
   items: RecommendationHistoryItem[];
-  total: number;
-  page: number;
-  limit: number;
 }
 
 export interface RecommendationHistoryFilters {
   userId: string;
-  startDate?: string; // ISO date string
-  endDate?: string; // ISO date string
-  genres?: number[]; // 장르 ID 배열
-  page?: number;
+  period?: 'today' | '7d' | '30d' | 'all'; // 기간 필터
+  genreId?: number; // 단일 장르 ID
   limit?: number;
 }
 
 /**
- * 추천 이력 조회
+ * 추천 이력 조회 (MyList "추천 받은 영화"용)
  */
 export async function getRecommendationHistory(
   filters: RecommendationHistoryFilters
 ): Promise<RecommendationHistoryResponse> {
   const params = new URLSearchParams();
   params.append('userId', filters.userId);
-  if (filters.startDate) params.append('startDate', filters.startDate);
-  if (filters.endDate) params.append('endDate', filters.endDate);
-  if (filters.genres && filters.genres.length > 0) {
-    params.append('genres', filters.genres.join(','));
+
+  if (filters.period && filters.period !== 'all') {
+    params.append('period', filters.period);
   }
-  params.append('page', String(filters.page || 1));
+
+  if (filters.genreId) {
+    params.append('genreId', String(filters.genreId));
+  }
+
   params.append('limit', String(filters.limit || 20));
 
   return apiJson(`${AI_BASE}/reco/history?${params.toString()}`);

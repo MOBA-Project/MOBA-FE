@@ -17,7 +17,7 @@ const MyList = () => {
   );
 
   // 추천 이력 필터
-  const [selectedDate, setSelectedDate] = useState<string>("all");
+  const [selectedPeriod, setSelectedPeriod] = useState<'today' | '7d' | '30d' | 'all'>("all");
   const [selectedGenre, setSelectedGenre] = useState<number | null>(null);
   const [isLoadingRecommended, setIsLoadingRecommended] = useState(false);
 
