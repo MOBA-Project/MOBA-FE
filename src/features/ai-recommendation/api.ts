@@ -189,3 +189,52 @@ export async function commitPreferences(payload: CommitRequest): Promise<CommitR
     body: JSON.stringify(payload),
   });
 }
+
+// 추천 이력 관련 타입
+export interface RecommendationHistoryItem {
+  movieId: number;
+  title: string;
+  posterPath?: string;
+  score: number;
+  reasons?: string[];
+  genres?: number[];
+  popularity?: number;
+  voteAverage?: number;
+  releaseDate?: string;
+  recommendedAt: string; // ISO date string
+}
+
+export interface RecommendationHistoryResponse {
+  items: RecommendationHistoryItem[];
+  total: number;
+  page: number;
+  limit: number;
+}
+
+export interface RecommendationHistoryFilters {
+  userId: string;
+  startDate?: string; // ISO date string
+  endDate?: string; // ISO date string
+  genres?: number[]; // 장르 ID 배열
+  page?: number;
+  limit?: number;
+}
+
+/**
+ * 추천 이력 조회
+ */
+export async function getRecommendationHistory(
+  filters: RecommendationHistoryFilters
+): Promise<RecommendationHistoryResponse> {
+  const params = new URLSearchParams();
+  params.append('userId', filters.userId);
+  if (filters.startDate) params.append('startDate', filters.startDate);
+  if (filters.endDate) params.append('endDate', filters.endDate);
+  if (filters.genres && filters.genres.length > 0) {
+    params.append('genres', filters.genres.join(','));
+  }
+  params.append('page', String(filters.page || 1));
+  params.append('limit', String(filters.limit || 20));
+
+  return apiJson(`${AI_BASE}/reco/history?${params.toString()}`);
+}
