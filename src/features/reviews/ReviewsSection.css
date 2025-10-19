@@ -164,6 +164,11 @@
   margin-bottom: 12px;
 }
 
+.reviewUser {
+  color: #ffffff;
+  font-weight: 700;
+}
+
 .userAvatar {
   width: 36px;
   height: 36px;

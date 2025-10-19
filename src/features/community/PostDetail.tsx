@@ -1,6 +1,10 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
-import { addComment, getPost, listComments, toggleLike } from "./api";
+import { addComment, getPost, listComments, toggleLike, updatePost, deletePost, updateComment, deleteComment } from "./api";
+import { getCurrentUser } from "shared/utils/userData";
+import { getUserPublic } from "shared/api/users";
+import { BiArrowBack, BiSubdirectoryRight } from "react-icons/bi";
+import { AiOutlineHeart, AiOutlineUser } from "react-icons/ai";
 import "./PostDetail.css";
 
 const PostDetail: React.FC = () => {
@@ -12,6 +16,18 @@ const PostDetail: React.FC = () => {
   const [error, setError] = useState<string | null>(null);
   const [commentText, setCommentText] = useState("");
   const [submitting, setSubmitting] = useState(false);
+  const [user, setUser] = useState<{ id: string; nickname?: string } | null>(null);
+  const [authorName, setAuthorName] = useState<string>("");
+  const [editing, setEditing] = useState(false);
+  const [editTitle, setEditTitle] = useState("");
+  const [editContent, setEditContent] = useState("");
+  const [editRating, setEditRating] = useState(5);
+  const ownerIdFromPost = React.useMemo(() => {
+    const uid: any = (post as any)?.userId;
+    if (uid && typeof uid === 'object') return uid.id || uid._id || String(uid);
+    if (uid) return String(uid);
+    return '';
+  }, [post]);
 
   useEffect(() => {
     let mounted = true;
@@ -20,9 +36,24 @@ const PostDetail: React.FC = () => {
         const p = await getPost(postId as string);
         if (!mounted) return;
         setPost(p);
+        setEditTitle(p.title);
+        setEditContent(p.content);
+        setEditRating(p.rating || 5);
         const list = await listComments(postId as string);
         if (!mounted) return;
         setComments(list);
+        // derive author name safely
+        try {
+          const uid: any = (p as any).userId;
+          const ownerId = uid && typeof uid === 'object' ? (uid.id || uid._id || String(uid)) : (uid ? String(uid) : '');
+          if ((p as any)?.author && typeof (p as any).author.nickname === 'string') setAuthorName((p as any).author.nickname);
+          else if (uid && typeof uid === 'object' && typeof uid.nickname === 'string') setAuthorName(uid.nickname);
+          else if (ownerId) {
+            const u = await getUserPublic(ownerId);
+            if (u?.nickname || (u as any)?.nick) setAuthorName(u.nickname || (u as any).nick);
+            else setAuthorName(ownerId);
+          }
+        } catch {}
       } catch (e: any) {
         if (!mounted) return;
         setError(e?.message || "게시글을 불러오지 못했습니다.");
@@ -35,6 +66,15 @@ const PostDetail: React.FC = () => {
       mounted = false;
     };
   }, [postId]);
+
+  useEffect(() => {
+    (async () => {
+      try {
+        const u = await getCurrentUser();
+        setUser(u);
+      } catch {}
+    })();
+  }, []);
 
   const onLike = async () => {
     if (!post) return;
@@ -70,7 +110,7 @@ const PostDetail: React.FC = () => {
     <div className="postDetailContainer">
       <div className="postDetailContent">
         <button className="backButton" onClick={() => navigate(-1)}>
-          ← 목록으로
+          <BiArrowBack size={18} /> 목록으로
         </button>
 
         <div className="postHeader">
@@ -89,19 +129,72 @@ const PostDetail: React.FC = () => {
               영화: {post.movieTitle}
               <span className="postRating">⭐ {post.rating}</span>
             </div>
+            <div className="postAuthor">작성자: {authorName || '익명'}</div>
             <div className="postStats">
-              <span>❤ {post.likes ?? 0}</span>
-              <span>💬 {post.commentCount ?? 0}</span>
+              <span><AiOutlineHeart /> {post.likes ?? 0}</span>
+              <span style={{ display:'inline-flex', alignItems:'center', gap:4 }}>
+                {/* comment icon */}
+                <BiSubdirectoryRight style={{ transform:'rotate(90deg)' }} /> {post.commentCount ?? 0}
+              </span>
             </div>
             <div className="postActions">
               <button className="likeButton" onClick={onLike}>
-                ❤ 좋아요
+                <AiOutlineHeart /> 좋아요
               </button>
+              {user && ownerIdFromPost && String(user.id) === String(ownerIdFromPost) && (
+                <>
+                  <button className="likeButton" onClick={() => setEditing((v)=>!v)}>
+                    {editing ? '수정 취소' : '수정'}
+                  </button>
+                  <button
+                    className="likeButton"
+                    onClick={async ()=>{
+                      if (window.confirm('게시글을 삭제할까요?')){
+                        try { await deletePost(post._id); navigate('/community'); } catch(e) { alert('삭제 실패'); }
+                      }
+                    }}
+                  >
+                    삭제
+                  </button>
+                </>
+              )}
             </div>
           </div>
         </div>
 
-        <div className="postContent">{post.content}</div>
+        {!editing ? (
+          <div className="postContent">{post.content}</div>
+        ) : (
+          <div style={{ marginTop: 12 }}>
+            <div className="formSection">
+              <label className="formLabel">제목</label>
+              <input className="textInput" value={editTitle} onChange={(e)=>setEditTitle(e.target.value)} />
+            </div>
+            <div className="formSection">
+              <label className="formLabel">평점 (1-5)</label>
+              <div className="ratingInput">
+                <input type="number" min={1} max={5} value={editRating} onChange={(e)=>setEditRating(Number(e.target.value))} />
+              </div>
+            </div>
+            <div className="formSection">
+              <label className="formLabel">본문</label>
+              <textarea className="textArea" value={editContent} onChange={(e)=>setEditContent(e.target.value)} rows={8} />
+            </div>
+            <div className="formActions">
+              <button
+                className="submitBtn"
+                onClick={async ()=>{
+                  try {
+                    const updated = await updatePost(post._id, { title: editTitle, content: editContent, rating: Math.max(1, Math.min(5, Number(editRating))) || 5 });
+                    setPost(updated);
+                    setEditing(false);
+                  } catch(e) { alert('수정 실패'); }
+                }}
+              >수정 완료</button>
+              <button className="cancelBtn" onClick={()=>{ setEditing(false); setEditTitle(post.title); setEditContent(post.content); setEditRating(post.rating); }}>취소</button>
+            </div>
+          </div>
+        )}
 
         <div className="postDivider" />
 
@@ -137,10 +230,26 @@ const PostDetail: React.FC = () => {
                   : typeof c?.userId === "object"
                   ? c.userId.nickname || c.userId.id || c.userId._id
                   : String(c.userId ?? "익명");
+              const ownerId = typeof c?.userId === 'object' ? (c.userId?.id || c.userId?._id || String(c.userId)) : String(c.userId);
               return (
                 <div key={c._id} className="commentItem">
-                  <div className="commentAuthor">{name}</div>
+                  <div className="commentAuthor"><AiOutlineUser style={{ marginRight:6 }} />{name}</div>
                   <div className="commentContent">{c.content}</div>
+                  {user && String(user.id) === String(ownerId) && (
+                    <div style={{ display: 'flex', gap: 8, marginTop: 6 }}>
+                      <button onClick={async ()=>{
+                        const next = window.prompt('댓글 내용을 수정하세요', c.content);
+                        if (next && next.trim()) {
+                          try { await updateComment(c._id, next.trim()); const list = await listComments(postId as string); setComments(list); } catch(e) { alert('수정 실패'); }
+                        }
+                      }}>수정</button>
+                      <button onClick={async ()=>{
+                        if (window.confirm('댓글을 삭제할까요?')){
+                          try { await deleteComment(c._id); const list = await listComments(postId as string); setComments(list); } catch(e) { alert('삭제 실패'); }
+                        }
+                      }}>삭제</button>
+                    </div>
+                  )}
                   {Array.isArray(c.replies) && c.replies.length > 0 && (
                     <div className="commentReplies">
                       {c.replies.map((r: any) => {
@@ -150,10 +259,26 @@ const PostDetail: React.FC = () => {
                             : typeof r?.userId === "object"
                             ? r.userId.nickname || r.userId.id || r.userId._id
                             : String(r.userId ?? "익명");
+                        const rowner = typeof r?.userId === 'object' ? (r.userId?.id || r.userId?._id || String(r.userId)) : String(r.userId);
                         return (
                           <div key={r._id} className="replyItem">
-                            <div className="replyAuthor">{rname}</div>
+                            <div className="replyAuthor"><BiSubdirectoryRight style={{ marginRight:6 }} />{rname}</div>
                             <div className="replyContent">{r.content}</div>
+                            {user && String(user.id) === String(rowner) && (
+                              <div style={{ display: 'flex', gap: 8, marginTop: 6 }}>
+                                <button onClick={async ()=>{
+                                  const next = window.prompt('댓글 내용을 수정하세요', r.content);
+                                  if (next && next.trim()) {
+                                    try { await updateComment(r._id, next.trim()); const list = await listComments(postId as string); setComments(list); } catch(e) { alert('수정 실패'); }
+                                  }
+                                }}>수정</button>
+                                <button onClick={async ()=>{
+                                  if (window.confirm('댓글을 삭제할까요?')){
+                                    try { await deleteComment(r._id); const list = await listComments(postId as string); setComments(list); } catch(e) { alert('삭제 실패'); }
+                                  }
+                                }}>삭제</button>
+                              </div>
+                            )}
                           </div>
                         );
                       })}

@@ -94,6 +94,11 @@
   font-size: 15px;
 }
 
+.postAuthor {
+  color: #a8a8c9;
+  font-size: 14px;
+}
+
 .postRating {
   display: inline-flex;
   align-items: center;
@@ -157,6 +162,16 @@
   white-space: pre-wrap;
   word-break: break-word;
 }
+
+/* 인라인 수정 폼 */
+.formSection { margin: 12px 0; }
+.formLabel { display: block; margin-bottom: 6px; color: #a8a8c9; font-weight: 600; }
+.textInput, .textArea { width: 100%; border-radius: 8px; border: 1px solid #3a3a5a; background: #0f0f1a; color: #fff; padding: 10px 12px; }
+.textArea { resize: vertical; }
+.ratingInput { display: flex; align-items: center; gap: 8px; }
+.formActions { display: flex; gap: 8px; }
+.submitBtn { background: #4a5fc1; color: #fff; border: none; border-radius: 8px; padding: 10px 16px; cursor: pointer; }
+.cancelBtn { background: transparent; color: #a8a8c9; border: 1px solid #3a3a5a; border-radius: 8px; padding: 10px 16px; cursor: pointer; }
 
 /* 구분선 */
 .postDivider {
@@ -271,10 +286,7 @@
   gap: 8px;
 }
 
-.commentAuthor::before {
-  content: "👤";
-  font-size: 16px;
-}
+.commentAuthor::before { content: none; }
 
 .commentContent {
   color: #fff;
@@ -308,10 +320,7 @@
   gap: 6px;
 }
 
-.replyAuthor::before {
-  content: "↳";
-  color: #666;
-}
+.replyAuthor::before { content: none; }
 
 .replyContent {
   color: #d0d0e0;
