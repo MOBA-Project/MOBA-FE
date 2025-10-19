@@ -185,25 +185,27 @@ const ReviewItem: React.FC<{
   // 디버깅: 리뷰 데이터 확인
   console.log('Review data:', review);
 
-  const ownerId =
-    typeof review?.userId === "object"
-      ? (review?.userId?.id || review?.userId?._id || String(review?.userId))
-      : String(review?.userId);
+  // Normalize owner id: supports object, pure string, and stringified object
+  const ownerId = (() => {
+    const u = (review as any)?.userId as any;
+    if (u && typeof u === 'object') return u.id || u._id || String(u);
+    if (typeof u === 'string') {
+      const m = u.match(/[0-9a-fA-F]{24}/);
+      return m ? m[0] : u;
+    }
+    return '';
+  })();
   const fallbackName =
-    review?.nickname ||
-    (typeof review?.author?.nickname === "string"
-      ? review.author.nickname
-      : typeof review?.userId === "object"
-      ? review?.userId?.nickname || review?.userId?.id || review?.userId?._id
-      : String(review?.userId || "익명"));
+    (review as any)?.nickname ||
+    (typeof (review as any)?.author?.nickname === 'string' && (review as any).author.nickname) ||
+    (typeof (review as any)?.userId === 'object' && ((review as any).userId.nickname || (review as any).userId.id || (review as any).userId._id)) ||
+    String((review as any)?.userId || '익명');
   const { data: publicUser } = useQuery({
     queryKey: ["user", ownerId],
     queryFn: () => getUserPublic(ownerId),
     enabled: !!ownerId && !review?.nickname && typeof review?.author?.nickname !== "string",
   });
-  const displayName = publicUser?.nickname || publicUser?.nick || fallbackName;
-
-  console.log('displayName:', displayName, 'review.nickname:', review?.nickname, 'fallbackName:', fallbackName);
+  const displayName = publicUser?.nickname || publicUser?.nick || (typeof fallbackName === 'string' ? fallbackName : String(fallbackName));
 
   return (
     <div
@@ -243,7 +245,7 @@ const ReviewItem: React.FC<{
             <AiOutlineDislike size={16} />
             {review.dislikes || 0}
           </button>
-          {user && String(user.id) === String(ownerId) && (
+          {user && (String(user.id) === String(ownerId) || (user as any).nick === (review as any)?.nickname) && (
             <>
               <button className="actionBtn" onClick={() => setEditingReview((v)=>!v)}>
                 {editingReview ? "수정 취소" : "수정"}
