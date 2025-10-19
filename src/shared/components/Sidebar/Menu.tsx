@@ -44,6 +44,9 @@ const Menu = () => {
         <Link style={{ textDecoration: "none" }} to="/mylist">
           <span>Mylist</span>
         </Link>
+        <Link style={{ textDecoration: "none" }} to="/ai-recommendation">
+          <span>AI 추천</span>
+        </Link>
       </div>
       <div className="title2">
         {authed ? (

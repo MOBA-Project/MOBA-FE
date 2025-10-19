@@ -131,9 +131,31 @@ const MyList = () => {
     activeTab === "reviewed" ? reviewed :
     recommended;
 
-  // 장르 옵션 생성
+  // 장르 한글 맵핑
+  const GENRE_KOREAN: { [key: string]: string } = {
+    action: '액션',
+    adventure: '모험',
+    animation: '애니메이션',
+    comedy: '코미디',
+    crime: '범죄',
+    documentary: '다큐',
+    drama: '드라마',
+    family: '가족',
+    fantasy: '판타지',
+    history: '역사',
+    horror: '공포',
+    music: '음악',
+    mystery: '미스터리',
+    romance: '로맨스',
+    'sci-fi': 'SF',
+    thriller: '스릴러',
+    war: '전쟁',
+    western: '서부',
+  };
+
+  // 장르 옵션 생성 (한글 라벨 사용)
   const genreOptions = Object.entries(GENRE_MAP).map(([key, id]) => ({
-    label: key.charAt(0).toUpperCase() + key.slice(1),
+    label: GENRE_KOREAN[key] || key.charAt(0).toUpperCase() + key.slice(1),
     value: id,
   }));
 

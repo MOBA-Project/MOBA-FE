@@ -273,6 +273,8 @@
   scrollbar-width: thin;
   scrollbar-color: #4a5fc1 #1a1a2e;
   padding-bottom: 8px;
+  -webkit-overflow-scrolling: touch;
+  scroll-behavior: smooth;
 }
 
 .filterButtons.genreScroll::-webkit-scrollbar {
@@ -298,7 +300,7 @@
   color: #a8a8c9;
   border: 1px solid #2a2a3e;
   border-radius: 8px;
-  padding: 10px 18px;
+  padding: 10px 16px;
   font-size: 14px;
   font-weight: 500;
   cursor: pointer;
@@ -306,6 +308,9 @@
   white-space: nowrap;
   position: relative;
   overflow: hidden;
+  min-width: 60px;
+  text-align: center;
+  flex-shrink: 0;
 }
 
 .filterBtn::before {
@@ -366,8 +371,9 @@
   }
 
   .filterBtn {
-    padding: 9px 16px;
+    padding: 9px 14px;
     font-size: 13px;
+    min-width: 55px;
   }
 
   .filterButtons.genreScroll {
@@ -386,7 +392,8 @@
   }
 
   .filterBtn {
-    padding: 8px 14px;
+    padding: 8px 12px;
     font-size: 12px;
+    min-width: 50px;
   }
 }
