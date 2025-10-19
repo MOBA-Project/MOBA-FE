@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { listPosts } from './api';
 import './Community.css';
+import { AiOutlineHeart, AiOutlineComment } from 'react-icons/ai';
 
 const PageSize = 10;
 
@@ -57,8 +58,13 @@ const CommunityPage: React.FC = () => {
                   <div style={{ color: '#a8a8c9', marginBottom: 6 }}>
                     영화: {p.movieTitle} · 평점: {p.rating}
                   </div>
-                  <div className="postMeta">
-                    💬 {p.commentCount ?? 0} · ❤ {p.likes ?? 0}
+                  <div className="postMeta" style={{ display:'flex', gap:12, alignItems:'center' }}>
+                    <span style={{ display:'inline-flex', alignItems:'center', gap:4 }}>
+                      <AiOutlineComment /> {p.commentCount ?? 0}
+                    </span>
+                    <span style={{ display:'inline-flex', alignItems:'center', gap:4 }}>
+                      <AiOutlineHeart /> {p.likes ?? 0}
+                    </span>
                   </div>
                 </div>
               </div>

@@ -12,7 +12,10 @@ import {
   deleteReviewComment,
   createReview,
   reactReviewComment,
+  updateReview,
+  deleteReview,
 } from "./api";
+import { getUserPublic } from "shared/api/users";
 import "./ReviewsSection.css";
 
 type User = { id: string; nick: string } | null;
@@ -59,6 +62,9 @@ const ReviewItem: React.FC<{
   focus?: boolean;
 }> = ({ review, user, focus }) => {
   const qc = useQueryClient();
+  const [editingReview, setEditingReview] = useState(false);
+  const [editRating, setEditRating] = useState<number>(review.rating || 5);
+  const [editContent, setEditContent] = useState<string>(review.content || "");
   const [expanded, setExpanded] = useState<Record<string, boolean>>({});
   const toggleExpanded = (rootId: string) =>
     setExpanded((prev) => ({ ...prev, [rootId]: !prev[rootId] }));
@@ -148,6 +154,51 @@ const ReviewItem: React.FC<{
       qc.invalidateQueries({ queryKey: ["movie", review.movieId, "reviews"] }),
   });
 
+  const updateReviewMut = useMutation({
+    mutationFn: () =>
+      updateReview(review._id, {
+        rating: Math.max(1, Math.min(5, Number(editRating))) || 5,
+        content: editContent,
+      }),
+    onSuccess: () => {
+      setEditingReview(false);
+      qc.invalidateQueries({ queryKey: ["movie", review.movieId, "reviews"] });
+      qc.invalidateQueries({ queryKey: ["movie", review.movieId, "reviewStats"] });
+    },
+  });
+
+  const deleteReviewMut = useMutation({
+    mutationFn: () => deleteReview(review._id),
+    onSuccess: () => {
+      qc.setQueryData(["movie", review.movieId, "reviews"], (prev: any) => {
+        if (!prev) return prev;
+        const remove = (arr: any[]) => arr.filter((r) => r._id !== review._id);
+        if (Array.isArray(prev)) return remove(prev);
+        if (Array.isArray(prev.reviews)) return { ...prev, reviews: remove(prev.reviews), total: Math.max(0, (prev.total||1)-1) };
+        if (Array.isArray(prev.items)) return { ...prev, items: remove(prev.items), total: Math.max(0, (prev.total||1)-1) };
+        return prev;
+      });
+      qc.invalidateQueries({ queryKey: ["movie", review.movieId, "reviewStats"] });
+    },
+  });
+
+  const ownerId =
+    typeof review?.userId === "object"
+      ? (review?.userId?.id || review?.userId?._id || String(review?.userId))
+      : String(review?.userId);
+  const fallbackName =
+    typeof review?.author?.nickname === "string"
+      ? review.author.nickname
+      : typeof review?.userId === "object"
+      ? review?.userId?.nickname || review?.userId?.id || review?.userId?._id
+      : String(review?.userId || "익명");
+  const { data: publicUser } = useQuery({
+    queryKey: ["user", ownerId],
+    queryFn: () => getUserPublic(ownerId),
+    enabled: !!ownerId && typeof review?.author?.nickname !== "string",
+  });
+  const displayName = publicUser?.nickname || publicUser?.nick || fallbackName;
+
   return (
     <div
       id={`review-${review._id}`}
@@ -158,9 +209,8 @@ const ReviewItem: React.FC<{
       className="reviewItem"
     >
       <div className="reviewHeader">
-        <div className="userAvatar">
-          {String(review.userId).charAt(0).toUpperCase()}
-        </div>
+        <div className="userAvatar">{String(displayName).charAt(0).toUpperCase()}</div>
+        <div className="reviewUser">{displayName}</div>
         <div className="reviewRating">
           <AiFillStar size={16} />
           {review.rating}
@@ -187,10 +237,51 @@ const ReviewItem: React.FC<{
             <AiOutlineDislike size={16} />
             {review.dislikes || 0}
           </button>
+          {user && String(user.id) === String(ownerId) && (
+            <>
+              <button className="actionBtn" onClick={() => setEditingReview((v)=>!v)}>
+                {editingReview ? "수정 취소" : "수정"}
+              </button>
+              <button
+                className="actionBtn"
+                onClick={() => {
+                  if (window.confirm('리뷰를 삭제할까요?')) deleteReviewMut.mutate();
+                }}
+              >
+                삭제
+              </button>
+            </>
+          )}
         </div>
       </div>
 
-      <div className="reviewContent">{review.content}</div>
+      {!editingReview ? (
+        <div className="reviewContent">{review.content}</div>
+      ) : (
+        <div className="createReviewBox" style={{ marginTop: 12 }}>
+          <div className="ratingInput">
+            <label>평점</label>
+            <input
+              type="number"
+              min={1}
+              max={5}
+              value={editRating}
+              onChange={(e) => setEditRating(Number(e.target.value))}
+            />
+            <AiFillStar size={20} color="#4a5fc1" />
+          </div>
+          <textarea
+            className="reviewTextarea"
+            value={editContent}
+            onChange={(e) => setEditContent(e.target.value)}
+            rows={4}
+          />
+          <div style={{ display: 'flex', gap: 8 }}>
+            <button className="submitButton" onClick={() => updateReviewMut.mutate()}>수정 완료</button>
+            <button className="submitButton cancel" onClick={() => { setEditingReview(false); setEditContent(review.content); setEditRating(review.rating); }}>취소</button>
+          </div>
+        </div>
+      )}
 
       <div className="commentsSection">
         <CommentBox
