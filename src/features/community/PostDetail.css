@@ -1,0 +1,64 @@
+.postDetailContainer {
+  width: 100%;
+  min-height: 100vh;
+  background: #0a0a0a;
+  color: #fff;
+}
+
+.postDetailContent {
+  width: 90%;
+  max-width: 900px;
+  margin: 0 auto;
+  padding: 48px 0;
+}
+
+.backButton { display: inline-flex; align-items: center; gap: 6px; margin-bottom: 16px; padding: 8px 10px; border-radius: 8px; border: 1px solid #2a2a3e; background: #121225; color: #fff; cursor: pointer; }
+
+.postCard { background: rgba(26, 26, 46, 0.4); border: 1px solid #2a2a3e; border-radius: 12px; padding: 20px; }
+.postHeader { display: flex; gap: 16px; }
+.moviePoster { width: 120px; border-radius: 10px; object-fit: cover; }
+
+.postHeaderInfo h1 { margin: 0 0 6px 0; font-size: 24px; }
+.movieInfo { display: flex; align-items: center; gap: 10px; color: #a8a8c9; }
+.movieTitle { font-weight: 600; color: #fff; }
+.rating { display: inline-flex; align-items: center; gap: 4px; color: #ffdd57; }
+
+.postMeta { margin-top: 6px; color: #a8a8c9; display: flex; align-items: center; gap: 8px; }
+.metaItem {}
+.metaDivider { opacity: 0.6; }
+
+.likeButton { margin-top: 10px; display: inline-flex; align-items: center; gap: 6px; padding: 8px 12px; border-radius: 8px; border: 1px solid #2a2a3e; background: #121225; color: #fff; cursor: pointer; }
+
+.postContent { margin-top: 18px; line-height: 1.7; white-space: pre-wrap; }
+
+.commentsSection { margin-top: 28px; }
+.commentInput { display: flex; flex-direction: column; gap: 8px; }
+.commentInput textarea { width: 100%; border-radius: 8px; border: 1px solid #3a3a5a; background: #0f0f1a; color: #fff; padding: 10px 12px; }
+.commentInput button { align-self: flex-end; padding: 8px 12px; border: 1px solid #2a2a3e; border-radius: 8px; background: #1b1b2f; color: #fff; cursor: pointer; }
+
+.commentsList { margin-top: 16px; display: flex; flex-direction: column; gap: 12px; }
+.emptyComments { color: #a8a8c9; text-align: center; padding: 24px; border: 1px dashed #2a2a3e; border-radius: 8px; }
+
+.commentItem { display: flex; gap: 12px; background: #121225; border: 1px solid #2a2a3e; border-radius: 10px; padding: 12px; }
+.commentAvatar, .replyAvatar { width: 36px; height: 36px; border-radius: 50%; background: #2a2a3e; display: flex; align-items: center; justify-content: center; font-weight: 700; color: #fff; }
+.commentBody { flex: 1; }
+.commentAuthor { font-weight: 700; margin-bottom: 4px; }
+.commentText { color: #d8d8ff; }
+
+.repliesList { margin-top: 8px; display: flex; flex-direction: column; gap: 8px; }
+.replyItem { display: flex; gap: 10px; background: #0f0f1a; border: 1px solid #2a2a3e; border-radius: 8px; padding: 10px; }
+.replyBody {}
+.replyAuthor { font-weight: 600; margin-bottom: 2px; }
+.replyText { color: #cfcfe8; }
+
+.loadingBox, .errorBox { display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 12px; min-height: 240px; background: rgba(26, 26, 46, 0.4); border: 1px solid #2a2a3e; border-radius: 12px; }
+.spinner { width: 28px; height: 28px; border-radius: 50%; border: 3px solid rgba(255,255,255,0.2); border-top-color: #4a5fc1; animation: spin 1s linear infinite; }
+
+@keyframes spin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
+
+@media (max-width: 600px) {
+  .postDetailContent { width: 95%; padding: 32px 0; }
+  .postHeader { flex-direction: column; align-items: center; }
+  .moviePoster { width: 160px; }
+}
+
