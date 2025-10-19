@@ -4,7 +4,7 @@ import { addComment, getPost, listComments, toggleLike, updatePost, deletePost, 
 import { getCurrentUser } from "shared/utils/userData";
 import { getUserPublic } from "shared/api/users";
 import { BiArrowBack, BiSubdirectoryRight } from "react-icons/bi";
-import { AiOutlineHeart, AiOutlineUser } from "react-icons/ai";
+import { AiOutlineHeart, AiOutlineUser, AiOutlineEdit, AiOutlineDelete, AiOutlineComment } from "react-icons/ai";
 import "./PostDetail.css";
 
 const PostDetail: React.FC = () => {
@@ -16,8 +16,9 @@ const PostDetail: React.FC = () => {
   const [error, setError] = useState<string | null>(null);
   const [commentText, setCommentText] = useState("");
   const [submitting, setSubmitting] = useState(false);
-  const [user, setUser] = useState<{ id: string; nickname?: string } | null>(null);
+  const [user, setUser] = useState<{ id: string; nick?: string } | null>(null);
   const [authorName, setAuthorName] = useState<string>("");
+  const [selfAltId, setSelfAltId] = useState<string>("");
   const [editing, setEditing] = useState(false);
   const [editTitle, setEditTitle] = useState("");
   const [editContent, setEditContent] = useState("");
@@ -72,6 +73,12 @@ const PostDetail: React.FC = () => {
       try {
         const u = await getCurrentUser();
         setUser(u);
+        if (u?.id) {
+          try {
+            const me = await getUserPublic(u.id);
+            if (me && (me as any)._id) setSelfAltId(String((me as any)._id));
+          } catch {}
+        }
       } catch {}
     })();
   }, []);
@@ -133,18 +140,21 @@ const PostDetail: React.FC = () => {
             <div className="postStats">
               <span><AiOutlineHeart /> {post.likes ?? 0}</span>
               <span style={{ display:'inline-flex', alignItems:'center', gap:4 }}>
-                {/* comment icon */}
-                <BiSubdirectoryRight style={{ transform:'rotate(90deg)' }} /> {post.commentCount ?? 0}
+                <AiOutlineComment /> {post.commentCount ?? 0}
               </span>
             </div>
             <div className="postActions">
               <button className="likeButton" onClick={onLike}>
                 <AiOutlineHeart /> 좋아요
               </button>
-              {user && ownerIdFromPost && String(user.id) === String(ownerIdFromPost) && (
+              {user && ownerIdFromPost && (
+                String(user.id) === String(ownerIdFromPost) ||
+                (selfAltId && String(selfAltId) === String(ownerIdFromPost)) ||
+                (!!authorName && !!user.nick && user.nick === authorName)
+              ) && (
                 <>
                   <button className="likeButton" onClick={() => setEditing((v)=>!v)}>
-                    {editing ? '수정 취소' : '수정'}
+                    <AiOutlineEdit /> {editing ? '수정 취소' : '수정'}
                   </button>
                   <button
                     className="likeButton"
@@ -154,7 +164,7 @@ const PostDetail: React.FC = () => {
                       }
                     }}
                   >
-                    삭제
+                    <AiOutlineDelete /> 삭제
                   </button>
                 </>
               )}
@@ -236,18 +246,18 @@ const PostDetail: React.FC = () => {
                   <div className="commentAuthor"><AiOutlineUser style={{ marginRight:6 }} />{name}</div>
                   <div className="commentContent">{c.content}</div>
                   {user && String(user.id) === String(ownerId) && (
-                    <div style={{ display: 'flex', gap: 8, marginTop: 6 }}>
-                      <button onClick={async ()=>{
+                    <div className="commentBtns" style={{ marginTop: 6 }}>
+                      <button className="commentActionBtn" onClick={async ()=>{
                         const next = window.prompt('댓글 내용을 수정하세요', c.content);
                         if (next && next.trim()) {
                           try { await updateComment(c._id, next.trim()); const list = await listComments(postId as string); setComments(list); } catch(e) { alert('수정 실패'); }
                         }
-                      }}>수정</button>
-                      <button onClick={async ()=>{
+                      }}><AiOutlineEdit /> 수정</button>
+                      <button className="commentActionBtn" onClick={async ()=>{
                         if (window.confirm('댓글을 삭제할까요?')){
                           try { await deleteComment(c._id); const list = await listComments(postId as string); setComments(list); } catch(e) { alert('삭제 실패'); }
                         }
-                      }}>삭제</button>
+                      }}><AiOutlineDelete /> 삭제</button>
                     </div>
                   )}
                   {Array.isArray(c.replies) && c.replies.length > 0 && (
@@ -265,18 +275,18 @@ const PostDetail: React.FC = () => {
                             <div className="replyAuthor"><BiSubdirectoryRight style={{ marginRight:6 }} />{rname}</div>
                             <div className="replyContent">{r.content}</div>
                             {user && String(user.id) === String(rowner) && (
-                              <div style={{ display: 'flex', gap: 8, marginTop: 6 }}>
-                                <button onClick={async ()=>{
+                              <div className="commentBtns" style={{ marginTop: 6 }}>
+                                <button className="commentActionBtn" onClick={async ()=>{
                                   const next = window.prompt('댓글 내용을 수정하세요', r.content);
                                   if (next && next.trim()) {
                                     try { await updateComment(r._id, next.trim()); const list = await listComments(postId as string); setComments(list); } catch(e) { alert('수정 실패'); }
                                   }
-                                }}>수정</button>
-                                <button onClick={async ()=>{
+                                }}><AiOutlineEdit /> 수정</button>
+                                <button className="commentActionBtn" onClick={async ()=>{
                                   if (window.confirm('댓글을 삭제할까요?')){
                                     try { await deleteComment(r._id); const list = await listComments(postId as string); setComments(list); } catch(e) { alert('삭제 실패'); }
                                   }
-                                }}>삭제</button>
+                                }}><AiOutlineDelete /> 삭제</button>
                               </div>
                             )}
                           </div>

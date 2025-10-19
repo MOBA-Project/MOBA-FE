@@ -18,7 +18,8 @@ export type Post = {
   movieTitle: string;
   moviePoster?: string | null;
   rating: number;
-  userId: string;
+  userId: string | { id?: string; _id?: string; nickname?: string } | null;
+  author?: { id?: string; nickname?: string };
   likes?: number;
   likedBy?: string[];
   commentCount?: number;
@@ -54,6 +55,24 @@ export async function createPost(payload: { title: string; content: string; movi
 
 export async function toggleLike(postId: string) {
   return apiJson<Post>(`/posts/${postId}/like`, { method: 'POST' });
+}
+
+export async function updatePost(
+  postId: string,
+  payload: Partial<Pick<Post, 'title' | 'content' | 'rating'>>
+) {
+  return apiJson<Post>(`/posts/${postId}`, {
+    method: 'PUT',
+    headers: { 'Content-Type': 'application/json', ...authHeader() },
+    body: JSON.stringify(payload),
+  });
+}
+
+export async function deletePost(postId: string) {
+  return apiJson<{ message: string }>(`/posts/${postId}`, {
+    method: 'DELETE',
+    headers: { ...authHeader() },
+  });
 }
 
 // Comments

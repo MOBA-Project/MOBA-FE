@@ -123,3 +123,28 @@ export async function reactReviewComment(reviewId: string, commentId: string) {
     body: JSON.stringify({ type: "like" }),
   });
 }
+
+// Review update/delete + my reviews
+export async function updateReview(
+  reviewId: string,
+  payload: { rating?: number; content?: string; tags?: string[]; isSpoiler?: boolean }
+) {
+  return apiJson(`/reviews/${reviewId}`, {
+    method: "PUT",
+    headers: { "Content-Type": "application/json", ...authHeaders() },
+    body: JSON.stringify(payload),
+  });
+}
+
+export async function deleteReview(reviewId: string) {
+  return apiJson(`/reviews/${reviewId}`, {
+    method: "DELETE",
+    headers: { ...authHeaders() },
+  });
+}
+
+export async function fetchMyReviews() {
+  return apiJson<any[]>(`/reviews/user/me`, {
+    headers: { ...authHeaders() },
+  });
+}
