@@ -354,9 +354,9 @@ const RootCommentView: React.FC<{
     <div className="commentItem">
       <div className="commentHeader">
         <div className="commentAvatar">
-          {String(root.userId).charAt(0).toUpperCase()}
+          {String(root.nickname || root.userId).charAt(0).toUpperCase()}
         </div>
-        <div className="commentUser">{root.userId}</div>
+        <div className="commentUser">{root.nickname || root.userId}</div>
         <div className="commentDate">
           {new Date(root.createdAt).toLocaleString("ko-KR")}
         </div>
@@ -437,9 +437,9 @@ const ChildCommentView: React.FC<{
     <div className="replyItem">
       <div className="commentHeader">
         <div className="replyAvatar">
-          {String(c.userId).charAt(0).toUpperCase()}
+          {String(c.nickname || c.userId).charAt(0).toUpperCase()}
         </div>
-        <div className="commentUser">{c.userId}</div>
+        <div className="commentUser">{c.nickname || c.userId}</div>
         <div className="commentDate">
           {new Date(c.createdAt).toLocaleString("ko-KR")}
         </div>
