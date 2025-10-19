@@ -1,0 +1,211 @@
+.postCreateContainer {
+  display: flex;
+  width: 100%;
+  min-height: 100vh;
+  background: #0a0a0a;
+  color: #fff;
+  align-items: center; /* 세로 중앙 정렬 */
+  padding: 24px; /* 또는 완전히 제거 */
+}
+
+.postCreateContent {
+  width: 90%;
+  max-width: 1000px;
+  margin: 0 auto;
+}
+
+.postCreateForm {
+  background: rgba(26, 26, 46, 0.4);
+  border: 1px solid #2a2a3e;
+  border-radius: 12px;
+  padding: 24px;
+  margin: 0 auto;
+}
+
+.formSection {
+  margin-bottom: 20px;
+}
+.formLabel {
+  display: block;
+  margin-bottom: 8px;
+  color: #a8a8c9;
+  font-weight: 600;
+}
+
+.movieSearch {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+.searchBox {
+  display: flex;
+  gap: 8px;
+}
+.searchInput {
+  flex: 1;
+  padding: 10px 12px;
+  border-radius: 8px;
+  border: 1px solid #3a3a5a;
+  background: #0f0f1a;
+  color: #fff;
+}
+.searchButton {
+  padding: 8px 12px;
+  border-radius: 8px;
+  border: 1px solid #3a3a5a;
+  background: #1b1b2f;
+  color: #fff;
+  cursor: pointer;
+}
+
+.searchResults {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+  gap: 10px;
+  max-height: 360px;
+  overflow: auto;
+  padding-top: 4px;
+}
+.movieResultItem {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+  background: #121225;
+  border: 1px solid #2a2a3e;
+  border-radius: 8px;
+  padding: 8px;
+  cursor: pointer;
+}
+.movieResultItem:hover {
+  background: #171736;
+}
+.resultPoster {
+  width: 46px;
+  height: 69px;
+  border-radius: 6px;
+  object-fit: cover;
+}
+.resultPlaceholder {
+  width: 46px;
+  height: 69px;
+  border-radius: 6px;
+  background: #2a2a3e;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #a8a8c9;
+}
+.resultInfo {
+  display: flex;
+  flex-direction: column;
+}
+.resultTitle {
+  font-weight: 600;
+}
+.resultMeta {
+  color: #a8a8c9;
+  font-size: 12px;
+}
+
+.selectedMovie {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 10px;
+  background: #121225;
+  border: 1px solid #2a2a3e;
+  border-radius: 8px;
+}
+.selectedPoster {
+  width: 46px;
+  height: 69px;
+  border-radius: 6px;
+  object-fit: cover;
+}
+.selectedPlaceholder {
+  width: 46px;
+  height: 69px;
+  border-radius: 6px;
+  background: #2a2a3e;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #a8a8c9;
+}
+.selectedInfo {
+  flex: 1;
+}
+.selectedTitle {
+  font-weight: 700;
+}
+.selectedId {
+  color: #a8a8c9;
+  font-size: 12px;
+}
+.changeButton {
+  padding: 8px 12px;
+  border-radius: 8px;
+  border: 1px solid #3a3a5a;
+  background: #1b1b2f;
+  color: #fff;
+  cursor: pointer;
+}
+
+.textInput,
+.textArea {
+  width: 100%;
+  border-radius: 8px;
+  border: 1px solid #3a3a5a;
+  background: #0f0f1a;
+  color: #fff;
+  padding: 10px 12px;
+}
+.textArea {
+  resize: vertical;
+}
+
+.ratingInput {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.errorMessage {
+  color: #ff6b6b;
+  background: rgba(255, 107, 107, 0.08);
+  border: 1px solid rgba(255, 107, 107, 0.4);
+  padding: 10px 12px;
+  border-radius: 8px;
+  margin: 8px 0;
+}
+
+.formActions {
+  display: flex;
+  gap: 10px;
+}
+.submitBtn {
+  background: #4a5fc1;
+  color: #fff;
+  border: none;
+  border-radius: 8px;
+  padding: 10px 16px;
+  cursor: pointer;
+}
+.cancelBtn {
+  background: transparent;
+  color: #a8a8c9;
+  border: 1px solid #3a3a5a;
+  border-radius: 8px;
+  padding: 10px 16px;
+  cursor: pointer;
+}
+
+@media (max-width: 600px) {
+  .postCreateContent {
+    width: 95%;
+    padding: 32px 0;
+  }
+  .searchResults {
+    grid-template-columns: 1fr;
+  }
+}
