@@ -39,18 +39,39 @@ const Login: React.FC = () => {
   return (
     <>
       <ImageSlider onSlideChange={setCurrentSlide} />
-      <div>
+      <div className="Login-main">
         <div className="loginLogo">
           <img src={Logo} alt="logo" />
         </div>
         <div className="Login-container">
           <div className="Login-content">
-            <div className="saying" dangerouslySetInnerHTML={{ __html: wiseSaying[currentSlide]?.text }} />
-            <input className="Login-Input1" type="text" placeholder="아이디" value={id} onChange={(e)=>setID(e.target.value)} />
-            <input className="Login-Input2" type="password" placeholder="비밀번호" value={pw} onChange={(e)=>setPw(e.target.value)} />
-            {errorMessage && (<small className="errorMessage">{errorMessage}</small>)}
-            <button onClick={()=>onSubmit()} className="Login-Btn">로그인</button>
-            <p className="aoc" onClick={()=>navigate('/account')}>회원가입</p>
+            <div
+              className="saying"
+              dangerouslySetInnerHTML={{ __html: wiseSaying[currentSlide]?.text }}
+            />
+            <input
+              className="Login-Input1"
+              type="text"
+              placeholder="아이디"
+              value={id}
+              onChange={(e) => setID(e.target.value)}
+            />
+            <input
+              className="Login-Input2"
+              type="password"
+              placeholder="비밀번호"
+              value={pw}
+              onChange={(e) => setPw(e.target.value)}
+            />
+            {errorMessage && (
+              <small className="errorMessage">{errorMessage}</small>
+            )}
+            <button onClick={() => onSubmit()} className="Login-Btn">
+              로그인
+            </button>
+            <p className="aoc" onClick={() => navigate('/account')}>
+              회원가입
+            </p>
           </div>
         </div>
       </div>

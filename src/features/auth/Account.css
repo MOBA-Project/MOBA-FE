@@ -8,27 +8,47 @@
   height: 100vh;
   top: 0;
   left: 0;
+  overflow: hidden;
 }
 
-.loginLogo {
+/* 로고 스타일 */
+.Account-main .loginLogo {
   position: absolute;
-  top: 20px;
+  top: 40px;
   left: 50%;
   transform: translateX(-50%);
-  z-index: 2;
+  z-index: 10;
+  animation: fadeInDown 0.6s ease;
+}
+.Account-main .loginLogo img {
+  width: 180px;
+  height: auto;
+  filter: drop-shadow(0 4px 12px rgba(74, 95, 193, 0.3));
+  transition: transform 0.3s ease;
+}
+.Account-main .loginLogo img:hover {
+  transform: scale(1.05);
 }
 
-.loginLogo img { width: 200px; height: auto; }
-
+/* 메인 컨테이너 */
 .Account-container {
   display: flex;
   justify-content: center;
   align-items: center;
-  width: 400px;
-  height: 600px;
-  background-color: rgba(0, 0, 0, 0.7);
+  width: 460px;
+  min-height: 620px;
+  background: linear-gradient(
+    135deg,
+    rgba(26, 26, 46, 0.95) 0%,
+    rgba(31, 31, 51, 0.95) 100%
+  );
+  backdrop-filter: blur(20px);
+  border: 1px solid rgba(74, 95, 193, 0.2);
+  border-radius: 20px;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5), 0 0 100px rgba(74, 95, 193, 0.1);
   z-index: 1;
-  border-radius: 8px;
+  padding: 40px;
+  animation: fadeInUp 0.6s ease;
 }
 
 .Account-content {
@@ -40,64 +60,371 @@
   align-items: center;
 }
 
-.accountForm { display: flex; flex-direction: column; align-items: center; z-index: 101; }
-
-.Account-Input1,
-.Account-Input2 {
-  width: 300px;
-  height: 40px;
-  margin-bottom: 20px;
-  border-radius: 5px;
-  border: none;
-  position: relative;
-  padding-left: 10px;
-  box-sizing: border-box;
-}
-
-.Account-Btn {
-  height: 40px;
-  color: #fff;
-  background-color: rgb(98, 59, 204);
-  border: none;
-  margin-top: 20px;
-  border-radius: 5px;
-  cursor: pointer;
+/* 명언 영역 */
+.Account-main .saying {
   width: 100%;
+  min-height: 130px;
+  color: #d0d0e0;
+  text-align: center;
+  margin-bottom: 24px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 15px;
+  line-height: 1.8;
+  font-style: italic;
+  animation: fadeIn 0.8s ease;
 }
 
-.saying { width: 100%; height: 150px; color: #fff; text-align: center; }
-
+/* 타이틀 */
 .endTitle {
   display: flex;
   text-align: center;
   color: #fff;
-  font-weight: 900;
-  height: 50px;
-  width: auto;
+  font-weight: 700;
+  font-size: 28px;
+  height: auto;
+  width: 100%;
   justify-content: center;
-  align-items: flex-end;
+  align-items: center;
+  margin-bottom: 32px;
+  letter-spacing: -0.5px;
 }
 
-.Account-BtnContainer { display: flex; justify-content: center; width: 80%; }
+/* 폼 스타일 */
+.accountForm {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 100%;
+  gap: 4px;
+  z-index: 101;
+}
 
-.idCheckButton { border: none; height: 30px; border-radius: 10px; background-color: rgb(109, 88, 202); }
+/* 입력 필드 컨테이너 */
+.idContainer,
+.nickContainer,
+.pwContainer,
+.confirmContainer {
+  width: 100%;
+  margin-bottom: 20px;
+}
 
-.idCheckButtonContainer { height: 40px; }
-
-.aoc { cursor: pointer; color: gray; font-size: 14px; padding-top: 15px; font-weight: 900; }
+.idContainer {
+  margin-bottom: 24px;
+}
 
 .idContainer small,
 .nickContainer small,
 .pwContainer small,
 .confirmContainer small {
-  height: 10%;
-  color: #fff;
   display: block;
-  text-align: center;
-  margin-bottom: 10px;
+  font-size: 13px;
+  margin-top: 8px;
+  margin-left: 4px;
+  transition: all 0.3s ease;
+}
+
+/* 성공/에러 메시지 색상 */
+.idContainer small {
+  color: #a8a8c9;
+}
+
+/* 아이디 중복확인 컨테이너 */
+.idCheckButtonContainer {
+  margin-top: 10px;
+  width: 100%;
+}
+
+/* 입력 필드 */
+.Account-Input1,
+.Account-Input2 {
+  width: 100%;
+  height: 48px;
+  padding: 0 16px;
+  background: rgba(15, 15, 26, 0.6);
+  border: 2px solid #2a2a3e;
+  border-radius: 10px;
+  color: #fff;
+  font-size: 15px;
+  transition: all 0.3s ease;
+  box-sizing: border-box;
+}
+
+.Account-Input1::placeholder,
+.Account-Input2::placeholder {
+  color: #666;
+}
+
+.Account-Input1:focus,
+.Account-Input2:focus {
+  outline: none;
+  border-color: #4a5fc1;
+  background: rgba(15, 15, 26, 0.8);
+  box-shadow: 0 0 0 4px rgba(74, 95, 193, 0.1);
+}
+
+.Account-Input1:hover:not(:focus),
+.Account-Input2:hover:not(:focus) {
+  border-color: #3a3a5a;
+}
+
+/* 아이디 중복확인 버튼 */
+.idCheckButton {
+  width: 100%;
+  height: 40px;
+  padding: 0 20px;
+  background: transparent;
+  border: 2px solid #4a5fc1;
+  border-radius: 10px;
+  color: #4a5fc1;
+  font-size: 14px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.idCheckButton:hover {
+  background: rgba(74, 95, 193, 0.1);
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(74, 95, 193, 0.2);
+}
+
+.idCheckButton:active {
+  transform: translateY(0);
+}
+
+.idCheckButton:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  transform: none;
+}
+
+/* 제출 버튼 컨테이너 */
+.Account-BtnContainer {
+  display: flex;
+  justify-content: center;
+  width: 100%;
+  margin-top: 24px;
+}
+
+/* 제출 버튼 */
+.Account-Btn {
+  width: 100%;
+  height: 52px;
+  color: #fff;
+  background: linear-gradient(135deg, #4a5fc1 0%, #5a6fd1 100%);
+  border: none;
+  border-radius: 10px;
+  font-size: 16px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 12px rgba(74, 95, 193, 0.3);
+}
+
+.Account-Btn:hover:not(:disabled) {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(74, 95, 193, 0.4);
+  background: linear-gradient(135deg, #5a6fd1 0%, #6a7fe1 100%);
+}
+
+.Account-Btn:active:not(:disabled) {
+  transform: translateY(0);
+}
+
+.Account-Btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+/* 추가 링크 */
+.Account-main .aoc {
+  cursor: pointer;
+  color: #a8a8c9;
+  font-size: 14px;
+  padding-top: 20px;
+  font-weight: 600;
+  text-decoration: none;
+  transition: all 0.2s ease;
+  position: relative;
+  display: inline-block;
+}
+
+.Account-main .aoc::after {
+  content: "";
+  position: absolute;
+  bottom: -2px;
+  left: 0;
+  width: 0;
+  height: 2px;
+  background: #4a5fc1;
+  transition: width 0.3s ease;
+}
+
+.aoc:hover {
+  color: #4a5fc1;
+}
+
+.aoc:hover::after {
+  width: 100%;
+}
+
+/* 검증 메시지 */
+.validation-message {
+  font-size: 13px;
+  margin-top: 6px;
+  margin-left: 4px;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.validation-message.error {
+  color: #ff6b6b;
+}
+
+.validation-message.error::before {
+  content: "⚠";
+}
+
+.validation-message.success {
+  color: #4ade80;
+}
+
+.validation-message.success::before {
+  content: "✓";
+}
+
+/* 애니메이션 */
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes fadeInDown {
+  from {
+    opacity: 0;
+    transform: translateY(-20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+/* 로딩 스피너 */
+.loading-spinner {
+  display: inline-block;
+  width: 16px;
+  height: 16px;
+  border: 2px solid rgba(255, 255, 255, 0.3);
+  border-top-color: #fff;
+  border-radius: 50%;
+  animation: spin 0.6s linear infinite;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* 반응형 디자인 */
+@media (max-width: 768px) {
+  .Account-container {
+    width: 90%;
+    max-width: 440px;
+    padding: 32px 24px;
+  }
+
+  .Account-main .loginLogo {
+    top: 30px;
+  }
+
+  .Account-main .loginLogo img {
+    width: 150px;
+  }
+
+  .endTitle {
+    font-size: 24px;
+  }
+
+  .Account-main .saying {
+    font-size: 14px;
+    min-height: 110px;
+  }
+}
+
+@media (max-width: 480px) {
+  .Account-container {
+    width: 95%;
+    padding: 28px 20px;
+    margin: 0 10px;
+  }
+
+  .Account-main .loginLogo {
+    top: 20px;
+  }
+
+  .Account-main .loginLogo img {
+    width: 130px;
+  }
+
+  .endTitle {
+    font-size: 22px;
+    margin-bottom: 24px;
+  }
+
+  .Account-main .saying {
+    font-size: 13px;
+    min-height: 100px;
+  }
+
+  .idCheckButtonContainer {
+    flex-direction: column;
+  }
+
+  .Account-Input1,
+  .Account-Input2 {
+    width: 100%;
+  }
+
+  .idCheckButton {
+    width: 100%;
+    height: 44px;
+  }
+
+  .Account-Btn {
+    height: 48px;
+    font-size: 15px;
+  }
 }
 
 @media (max-width: 420px) {
-  .Account-container { width: calc(100% - 2rem); height: auto; padding: 2rem 0; }
-  .Account-Input1, .Account-Input2 { width: calc(100% - 2rem); max-width: 300px; }
+  .Account-container {
+    width: calc(100% - 20px);
+    height: auto;
+    padding: 24px 16px;
+  }
+
+  .Account-Input1,
+  .Account-Input2 {
+    width: 100%;
+  }
 }
