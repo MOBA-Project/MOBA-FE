@@ -102,6 +102,7 @@ const PostDetail: React.FC = () => {
       setCommentText("");
       const list = await listComments(postId as string);
       setComments(list);
+      setPost((prev: any) => (prev ? { ...prev, commentCount: Array.isArray(list) ? list.length : prev.commentCount } : prev));
     } catch (e: any) {
       alert(e?.message || "댓글 작성 실패");
     } finally {
@@ -116,7 +117,14 @@ const PostDetail: React.FC = () => {
   return (
     <div className="postDetailContainer">
       <div className="postDetailContent">
-        <button className="backButton" onClick={() => navigate(-1)}>
+        <button
+          className="backButton"
+          onClick={() => {
+            navigate('/community', {
+              state: post ? { updatedPost: { id: post._id, commentCount: post.commentCount ?? 0, likes: post.likes ?? 0 } } : undefined,
+            });
+          }}
+        >
           <BiArrowBack size={18} /> 목록으로
         </button>
 
