@@ -83,11 +83,6 @@ const AIMovieCard: React.FC<AIMovieCardProps> = ({
               ))}
             </div>
           )}
-
-          {/* 추천 점수 */}
-          <div className="aiMovieCardScore">
-            {Math.round(item.score * 100)}% 매칭
-          </div>
         </Link>
 
         {/* 피드백 버튼 */}

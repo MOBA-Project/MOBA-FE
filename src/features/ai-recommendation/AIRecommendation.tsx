@@ -252,7 +252,9 @@ const AIRecommendation: React.FC = () => {
             <div>
               <h1 className="aiRecoTitle">샘플 영화 평가</h1>
               <p className="aiRecoSubtitle">
-                마음에 드는 영화는 좋아요, 관심 없는 영화는 싫어요를 눌러주세요
+                마음에 드는 영화는 좋아요, 관심 없는 영화는 싫어요를 눌러주세요.
+                <br />
+                평가 완료 후 하단의 '추천 미리보기' 버튼을 눌러주세요!
               </p>
             </div>
             <button className="secondaryButton" onClick={handleReset}>
