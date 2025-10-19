@@ -1,7 +1,8 @@
 import axios from "axios";
 
-const baseURL =
-  process.env.REACT_APP_API_BASE_URL || "http://49.50.134.198:4000";
+// Prefer env; otherwise default to "/api" (works with Vercel rewrites)
+// Note: keeping a hardcoded host here is not recommended and was removed
+const baseURL = process.env.REACT_APP_API_BASE_URL || "/api";
 const AUTH_MODE = (process.env.REACT_APP_AUTH_MODE || 'header').toLowerCase(); // 'header' | 'cookie'
 const DEBUG_AUTH = String(process.env.REACT_APP_DEBUG_AUTH || '').toLowerCase() === 'true' || process.env.REACT_APP_DEBUG_AUTH === '1';
 
