@@ -303,6 +303,22 @@
   gap: 12px;
 }
 
+.commentBtns { display: flex; gap: 8px; }
+.commentActionBtn {
+  background: transparent;
+  border: 1px solid #2a2a3e;
+  border-radius: 6px;
+  padding: 6px 10px;
+  color: #a8a8c9;
+  font-size: 13px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+.commentActionBtn:hover { border-color: #4a5fc1; color: #fff; background: rgba(74,95,193,0.1); }
+
 .replyItem {
   background: rgba(26, 26, 46, 0.2);
   border: 1px solid #2a2a3e;
