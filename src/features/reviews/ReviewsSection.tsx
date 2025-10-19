@@ -187,15 +187,16 @@ const ReviewItem: React.FC<{
       ? (review?.userId?.id || review?.userId?._id || String(review?.userId))
       : String(review?.userId);
   const fallbackName =
-    typeof review?.author?.nickname === "string"
+    review?.nickname ||
+    (typeof review?.author?.nickname === "string"
       ? review.author.nickname
       : typeof review?.userId === "object"
       ? review?.userId?.nickname || review?.userId?.id || review?.userId?._id
-      : String(review?.userId || "익명");
+      : String(review?.userId || "익명"));
   const { data: publicUser } = useQuery({
     queryKey: ["user", ownerId],
     queryFn: () => getUserPublic(ownerId),
-    enabled: !!ownerId && typeof review?.author?.nickname !== "string",
+    enabled: !!ownerId && !review?.nickname && typeof review?.author?.nickname !== "string",
   });
   const displayName = publicUser?.nickname || publicUser?.nick || fallbackName;
 
