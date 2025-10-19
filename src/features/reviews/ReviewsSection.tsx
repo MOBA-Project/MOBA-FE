@@ -182,6 +182,9 @@ const ReviewItem: React.FC<{
     },
   });
 
+  // 디버깅: 리뷰 데이터 확인
+  console.log('Review data:', review);
+
   const ownerId =
     typeof review?.userId === "object"
       ? (review?.userId?.id || review?.userId?._id || String(review?.userId))
@@ -199,6 +202,8 @@ const ReviewItem: React.FC<{
     enabled: !!ownerId && !review?.nickname && typeof review?.author?.nickname !== "string",
   });
   const displayName = publicUser?.nickname || publicUser?.nick || fallbackName;
+
+  console.log('displayName:', displayName, 'review.nickname:', review?.nickname, 'fallbackName:', fallbackName);
 
   return (
     <div
