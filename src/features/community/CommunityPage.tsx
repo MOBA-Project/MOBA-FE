@@ -1,5 +1,5 @@
-import React, { useEffect, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import React, { useEffect, useRef, useState } from 'react';
+import { useLocation, useNavigate } from 'react-router-dom';
 import { listPosts } from './api';
 import './Community.css';
 import { AiOutlineHeart, AiOutlineComment } from 'react-icons/ai';
@@ -9,6 +9,8 @@ const PageSize = 10;
 const CommunityPage: React.FC = () => {
   const navigate = useNavigate();
   const [page, setPage] = useState(1);
+  const location = useLocation() as any;
+  const pendingUpdateRef = useRef<any>(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [total, setTotal] = useState(0);
@@ -20,7 +22,17 @@ const CommunityPage: React.FC = () => {
     listPosts(page, PageSize)
       .then(({ items, total }) => {
         if (!mounted) return;
-        setItems(items);
+        // Merge any pending update (from PostDetail state)
+        const upd = pendingUpdateRef.current || location?.state?.updatedPost;
+        let next = items;
+        if (upd && upd.id) {
+          next = items.map((it: any) =>
+            String(it._id) === String(upd.id)
+              ? { ...it, commentCount: typeof upd.commentCount === 'number' ? upd.commentCount : it.commentCount, likes: typeof upd.likes === 'number' ? upd.likes : it.likes }
+              : it
+          );
+        }
+        setItems(next);
         setTotal(total || items.length);
       })
       .catch(() => {
@@ -32,6 +44,16 @@ const CommunityPage: React.FC = () => {
       mounted = false;
     };
   }, [page]);
+
+  // Capture navigation state update once then clear it
+  useEffect(() => {
+    const upd = location?.state?.updatedPost;
+    if (upd && upd.id) {
+      pendingUpdateRef.current = upd;
+      // Clear state to avoid reapplying on future navigations
+      window.history.replaceState({}, document.title);
+    }
+  }, [location?.state]);
 
   const pageCount = Math.max(1, Math.ceil(total / PageSize));
 
