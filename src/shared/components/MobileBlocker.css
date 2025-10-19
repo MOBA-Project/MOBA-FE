@@ -1,0 +1,32 @@
+.mobileBlockerOverlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.9);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 10000;
+}
+
+.mobileBlockerCard {
+  width: min(90%, 520px);
+  background: #11131a;
+  border: 1px solid #2a2a3e;
+  border-radius: 12px;
+  padding: 24px;
+  color: #fff;
+  text-align: center;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+}
+
+.mobileBlockerCard h3 {
+  margin: 0 0 12px 0;
+  font-size: 20px;
+}
+
+.mobileBlockerCard p {
+  margin: 0;
+  color: #bfc3d9;
+  line-height: 1.6;
+}
+
