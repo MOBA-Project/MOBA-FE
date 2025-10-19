@@ -116,13 +116,6 @@ function MovieDetail() {
               <span>{liked ? "북마크됨" : "북마크"}</span>
             </button>
           )}
-          <button
-            className="writePostButton"
-            onClick={() => navigate(`/community/new?movieId=${movieID}`)}
-            style={{ marginLeft: 8 }}
-          >
-            감상문 쓰기
-          </button>
         </div>
 
         {/* 영화 정보 */}
