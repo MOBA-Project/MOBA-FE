@@ -27,6 +27,11 @@ export const apiClient = axios.create({
 // If server uses HttpOnly cookies for auth, enable credentials
 apiClient.defaults.withCredentials = AUTH_MODE === 'cookie';
 
+// Prefer Korean localization when server supports it
+try {
+  (apiClient.defaults.headers.common as any)['Accept-Language'] = 'ko-KR';
+} catch {}
+
 // Attach Authorization header automatically if available
 apiClient.interceptors.request.use((config) => {
   try {

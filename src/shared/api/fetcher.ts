@@ -28,6 +28,14 @@ function withAuth(headers: AnyHeaders = {}): { headers: AnyHeaders; token: strin
 export async function apiFetch(path: string, init: RequestInit = {}): Promise<Response> {
   const url = path.startsWith('http') ? path : `${API_BASE_URL}${path.startsWith('/') ? '' : '/'}${path}`;
   const { headers, token } = withAuth(init.headers as AnyHeaders);
+  // Prefer Korean localization when server supports it
+  try {
+    const has = headers instanceof Headers ? headers.get('Accept-Language') : (headers as any)['Accept-Language'];
+    if (!has) {
+      if (headers instanceof Headers) headers.set('Accept-Language', 'ko-KR');
+      else (headers as any)['Accept-Language'] = 'ko-KR';
+    }
+  } catch {}
   // Default JSON header if body provided and no content-type
   if (init.body && !(headers as any)['Content-Type']) {
     if (headers instanceof Headers) headers.set('Content-Type', 'application/json');
