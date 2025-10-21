@@ -6,9 +6,10 @@ export async function getMovies() {
   return res.data;
 }
 
-export async function getMovieVideos(movieId: number) {
+export async function getMovieVideos(movieId: number, language?: string) {
+  const qs = language ? `?language=${encodeURIComponent(language)}` : "";
   const res = await apiClient.get<{ results: MovieVideo[] }>(
-    `/movies/${movieId}/videos`
+    `/movies/${movieId}/videos${qs}`
   );
   return res.data.results;
 }

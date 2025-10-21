@@ -150,11 +150,11 @@
 }
 
 /* 편집/삭제는 명확히 구분되는 세컨더리 스타일 */
-.editButton {
+.postActions .editButton {
   padding: 10px 16px;
   background: transparent;
-  border: 1px solid #3a3a5a;
-  color: #a8a8c9;
+  border: 1px solid #3a3a5a !important;
+  color: #a8a8c9 !important;
   border-radius: 8px;
   font-size: 14px;
   font-weight: 600;
@@ -164,17 +164,17 @@
   align-items: center;
   gap: 6px;
 }
-.editButton:hover {
-  border-color: #6bb9a5; /* teal-ish */
-  color: #e7fff9;
-  background: rgba(107, 185, 165, 0.12);
+.postActions .editButton:hover {
+  border-color: #6bb9a5 !important; /* teal-ish */
+  color: #e7fff9 !important;
+  background: rgba(107, 185, 165, 0.12) !important;
 }
 
-.deleteButton {
+.postActions .deleteButton {
   padding: 10px 16px;
   background: transparent;
-  border: 1px solid rgba(255, 107, 107, 0.4);
-  color: #ff6b6b;
+  border: 1px solid rgba(255, 107, 107, 0.4) !important;
+  color: #ff6b6b !important;
   border-radius: 8px;
   font-size: 14px;
   font-weight: 700;
@@ -184,10 +184,10 @@
   align-items: center;
   gap: 6px;
 }
-.deleteButton:hover {
-  border-color: #ff6b6b;
-  background: rgba(255, 107, 107, 0.12);
-  color: #ffd9d9;
+.postActions .deleteButton:hover {
+  border-color: #ff6b6b !important;
+  background: rgba(255, 107, 107, 0.12) !important;
+  color: #ffd9d9 !important;
 }
 
 /* 게시글 본문 */
@@ -205,14 +205,52 @@
 }
 
 /* 인라인 수정 폼 */
-.formSection { margin: 12px 0; }
-.formLabel { display: block; margin-bottom: 6px; color: #a8a8c9; font-weight: 600; }
-.textInput, .textArea { width: 100%; border-radius: 8px; border: 1px solid #3a3a5a; background: #0f0f1a; color: #fff; padding: 10px 12px; }
-.textArea { resize: vertical; }
-.ratingInput { display: flex; align-items: center; gap: 8px; }
-.formActions { display: flex; gap: 8px; }
-.submitBtn { background: #4a5fc1; color: #fff; border: none; border-radius: 8px; padding: 10px 16px; cursor: pointer; }
-.cancelBtn { background: transparent; color: #a8a8c9; border: 1px solid #3a3a5a; border-radius: 8px; padding: 10px 16px; cursor: pointer; }
+.formSection {
+  margin: 12px 0;
+}
+.formLabel {
+  display: block;
+  margin-bottom: 6px;
+  color: #a8a8c9;
+  font-weight: 600;
+}
+.textInput,
+.textArea {
+  width: 100%;
+  border-radius: 8px;
+  border: 1px solid #3a3a5a;
+  background: #0f0f1a;
+  color: #fff;
+  padding: 10px 12px;
+}
+.textArea {
+  resize: vertical;
+}
+.ratingInput {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.formActions {
+  display: flex;
+  gap: 8px;
+}
+.submitBtn {
+  background: #4a5fc1;
+  color: #fff;
+  border: none;
+  border-radius: 8px;
+  padding: 10px 16px;
+  cursor: pointer;
+}
+.cancelBtn {
+  background: transparent;
+  color: #a8a8c9;
+  border: 1px solid #3a3a5a;
+  border-radius: 8px;
+  padding: 10px 16px;
+  cursor: pointer;
+}
 
 /* 구분선 */
 .postDivider {
@@ -327,7 +365,9 @@
   gap: 8px;
 }
 
-.commentAuthor::before { content: none; }
+.commentAuthor::before {
+  content: none;
+}
 
 .commentContent {
   color: #fff;
@@ -344,7 +384,10 @@
   gap: 12px;
 }
 
-.commentBtns { display: flex; gap: 8px; }
+.commentBtns {
+  display: flex;
+  gap: 8px;
+}
 .commentActionBtn {
   background: transparent;
   border: 1px solid #2a2a3e;
@@ -358,7 +401,11 @@
   align-items: center;
   gap: 6px;
 }
-.commentActionBtn:hover { border-color: #4a5fc1; color: #fff; background: rgba(74,95,193,0.1); }
+.commentActionBtn:hover {
+  border-color: #4a5fc1;
+  color: #fff;
+  background: rgba(74, 95, 193, 0.1);
+}
 
 .replyItem {
   background: rgba(26, 26, 46, 0.2);
@@ -377,7 +424,9 @@
   gap: 6px;
 }
 
-.replyAuthor::before { content: none; }
+.replyAuthor::before {
+  content: none;
+}
 
 .replyContent {
   color: #d0d0e0;

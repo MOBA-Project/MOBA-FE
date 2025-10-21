@@ -1,5 +1,6 @@
 import React, { useRef, useState, useEffect } from "react";
 import { getMovies, getMovieVideos } from "features/movies/api/movies";
+import { fetchMovies as fetchMoviesByPage } from "features/movies/api";
 import { Swiper, SwiperSlide } from "swiper/react";
 import { EffectCoverflow, Pagination, Autoplay } from "swiper/modules";
 import "swiper/css";
@@ -9,6 +10,9 @@ import "../Main/Main.css";
 
 const Main = () => {
   const swiperRef = useRef(null);
+  // 설정: 목표 슬라이드 개수/최대 페이지
+  const TARGET_COUNT = 20;
+  const MAX_PAGES = 10;
   const [movies, setMovies] = useState([]);
   const [error, setError] = useState(null);
   const [currentVideoKey, setCurrentVideoKey] = useState(null);
@@ -51,8 +55,14 @@ const Main = () => {
     if (videoMap[movieId]) return videoMap[movieId];
 
     try {
-      const results = await getMovieVideos(movieId);
-      const video = results.find((v) => v.site === "YouTube");
+      // 1) ko-KR 우선
+      let results = await getMovieVideos(movieId, 'ko-KR');
+      let video = Array.isArray(results) ? results.find((v) => v.site === "YouTube") : null;
+      // 2) 없으면 en-US 폴백
+      if (!video) {
+        results = await getMovieVideos(movieId, 'en-US');
+        video = Array.isArray(results) ? results.find((v) => v.site === "YouTube") : null;
+      }
 
       if (video) {
         setVideoMap((prev) => ({ ...prev, [movieId]: video }));
@@ -65,9 +75,9 @@ const Main = () => {
     return null;
   };
 
-  // 🎥 배경 비디오 설정
-  const updateBackgroundVideo = async (index) => {
-    const selectedMovie = movies[index];
+  // 🎥 배경 비디오 설정 (현재 표시 중 배열 기준)
+  const updateBackgroundVideoForList = async (index, list) => {
+    const selectedMovie = list[index];
     if (!selectedMovie) return;
 
     setVideoLoading(true);
@@ -79,20 +89,41 @@ const Main = () => {
     }
   };
 
-  // ✅ 영화 데이터 가져오기
+  // ✅ 영화 데이터 가져오기 (여러 페이지에서 유튜브 영상 있는 작품만 수집)
   useEffect(() => {
     const fetchMovies = async () => {
       try {
-        const data = await getMovies();
+        const targetCount = TARGET_COUNT;
+        const maxPages = MAX_PAGES;
+        const collected = [];
 
-        if (Array.isArray(data.results)) {
-          const filteredMovies = data.results
-            .filter((movie) => movie.vote_average >= 7) // 평점 조건 완화
-            .slice(0, 10); // 최대 10개
-          setMovies(filteredMovies);
-        } else {
+        // 1) 첫 페이지: 기존 엔드포인트 사용
+        const first = await getMovies();
+        if (!first || !Array.isArray(first.results)) {
           throw new Error("영화 데이터가 배열이 아닙니다.");
         }
+        const enqueueWithYoutube = async (batch) => {
+          const prelim = Array.isArray(batch) ? batch : [];
+          const checks = await Promise.all(prelim.map((m) => fetchMovieVideo(m.id)));
+          prelim.forEach((m, idx) => {
+            if (checks[idx] && collected.every((c) => c.id === undefined || c.id !== m.id)) {
+              collected.push(m);
+            }
+          });
+        };
+        await enqueueWithYoutube(first.results);
+
+        // 2) 추가 페이지 순회 수집
+        let page = 2;
+        while (collected.length < targetCount && page <= maxPages) {
+          const data = await fetchMoviesByPage(page, "");
+          const list = Array.isArray(data?.results) ? data.results : [];
+          if (list.length === 0) break;
+          await enqueueWithYoutube(list);
+          page += 1;
+        }
+
+        setMovies(collected.slice(0, targetCount));
       } catch (error) {
         console.error("영화 데이터를 가져오는 중 오류 발생:", error);
         setError("영화 데이터를 가져오는 중 오류가 발생했습니다.");
@@ -102,22 +133,22 @@ const Main = () => {
     fetchMovies();
   }, []);
 
-  // ✅ 상위 3개 영화 비디오 미리 로딩
+  // ✅ 초기 영화 비디오 미리 로딩
   useEffect(() => {
     const preload = async () => {
       // 모든 후보의 트레일러 키를 미리 가져와 캐시에 채워 둡니다.
-      const ids = movies.slice(0, 12).map((m) => m.id);
+      const ids = movies.slice(0, TARGET_COUNT).map((m) => m.id);
       await Promise.allSettled(ids.map((id) => fetchMovieVideo(id)));
       // 가운데 슬라이드의 비디오로 초기화
-      const center = Math.floor(movies.length / 2);
-      updateBackgroundVideo(center);
+      const center = Math.floor((movies.length || ids.length) / 2);
+      updateBackgroundVideoForList(center, movies);
     };
 
     if (movies.length > 0) preload();
   }, [movies]);
 
   const handleSlideChange = (swiper) => {
-    updateBackgroundVideo(swiper.activeIndex);
+    updateBackgroundVideoForList(swiper.activeIndex, movies);
   };
 
   if (error) {
@@ -213,7 +244,7 @@ const Main = () => {
           className="mySwiper"
           onSwiper={(swiper) => {
             swiperRef.current = swiper;
-            updateBackgroundVideo(swiper.activeIndex);
+            updateBackgroundVideoForList(swiper.activeIndex, movies);
           }}
           onSlideChange={handleSlideChange}
         >
@@ -244,7 +275,7 @@ const Main = () => {
         <InitCenterSlide
           moviesLength={movies.length}
           swiperRef={swiperRef}
-          updateBackgroundVideo={updateBackgroundVideo}
+          updateBackgroundVideo={(i)=>updateBackgroundVideoForList(i, movies)}
         />
       )}
     </>
