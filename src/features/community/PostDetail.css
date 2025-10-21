@@ -149,6 +149,47 @@
   color: #fff;
 }
 
+/* 편집/삭제는 명확히 구분되는 세컨더리 스타일 */
+.editButton {
+  padding: 10px 16px;
+  background: transparent;
+  border: 1px solid #3a3a5a;
+  color: #a8a8c9;
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+.editButton:hover {
+  border-color: #6bb9a5; /* teal-ish */
+  color: #e7fff9;
+  background: rgba(107, 185, 165, 0.12);
+}
+
+.deleteButton {
+  padding: 10px 16px;
+  background: transparent;
+  border: 1px solid rgba(255, 107, 107, 0.4);
+  color: #ff6b6b;
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+.deleteButton:hover {
+  border-color: #ff6b6b;
+  background: rgba(255, 107, 107, 0.12);
+  color: #ffd9d9;
+}
+
 /* 게시글 본문 */
 .postContent {
   padding: 32px;

@@ -153,11 +153,11 @@ const PostDetail: React.FC = () => {
                 (!!authorName && !!user.nick && user.nick === authorName)
               ) && (
                 <>
-                  <button className="likeButton" onClick={() => setEditing((v)=>!v)}>
+                  <button className="editButton" onClick={() => setEditing((v)=>!v)}>
                     <AiOutlineEdit /> {editing ? '수정 취소' : '수정'}
                   </button>
                   <button
-                    className="likeButton"
+                    className="deleteButton"
                     onClick={async ()=>{
                       if (window.confirm('게시글을 삭제할까요?')){
                         try { await deletePost(post._id); navigate('/community'); } catch(e) { alert('삭제 실패'); }
