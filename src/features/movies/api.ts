@@ -14,7 +14,9 @@ export const searchMovies = async (query: string, page = 1) => {
 };
 
 export const fetchMovieCredits = async (id: string | number) => {
-  return apiJson(`/movies/${id}/credits`); // { id, cast: [], crew: [] }
+  // 요청 시 한국어 로케일을 명시해 캐스트/크루의 표시 필드가 가능하면 한글로 오도록 요청
+  // 서버가 language 파라미터를 프록시하지 않으면 무시될 수 있음
+  return apiJson(`/movies/${id}/credits?language=ko-KR`); // { id, cast: [], crew: [] }
 };
 
 export const fetchSimilarMovies = async (id: string | number, page = 1) => {
